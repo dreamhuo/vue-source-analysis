@@ -225,6 +225,7 @@ export default class Watcher {
           handleError(e, this.vm, `callback for watcher "${this.expression}"`)
         }
       } else {
+        // **这里的 cb 回调函数传递的参数就是 value 和 oldValue。
         cb.call(this.vm, value, oldValue)
       }
     }

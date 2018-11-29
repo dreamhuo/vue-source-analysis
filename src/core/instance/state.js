@@ -83,6 +83,7 @@ function initProps (vm: Component, propsOptions: Object) {
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // **判断是否是保留关键字
       const hyphenatedKey = hyphenate(key)
       if (isReservedAttribute(hyphenatedKey) ||
           config.isReservedAttr(hyphenatedKey)) {
@@ -108,6 +109,7 @@ function initProps (vm: Component, propsOptions: Object) {
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
+    // **proxy 方法将 props 中的属性映射到 Vue 实例 vm 上，便于我们可以用 vm.myProps 来获取数据
     if (!(key in vm)) {
       proxy(vm, `_props`, key)
     }
@@ -200,6 +202,7 @@ function initComputed (vm: Component, computed: Object) {
 
     if (!isSSR) {
       // create internal watcher for the computed property.
+      // **为 computed 属性创建 Watcher
       watchers[key] = new Watcher(
         vm,
         getter || noop,
@@ -212,8 +215,10 @@ function initComputed (vm: Component, computed: Object) {
     // component prototype. We only need to define computed properties defined
     // at instantiation here.
     if (!(key in vm)) {
+      // **执行 defineComputed 方法
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
+      // 在开发环境中判断key在data和prop中的唯一性
       if (key in vm.$data) {
         warn(`The computed property "${key}" is already defined in data.`, vm)
       } else if (vm.$options.props && key in vm.$options.props) {
@@ -229,6 +234,7 @@ export function defineComputed (
   userDef: Object | Function
 ) {
   const shouldCache = !isServerRendering()
+  // **定义 sharedPropertyDefinition 的 getter 和 setter
   if (typeof userDef === 'function') {
     sharedPropertyDefinition.get = shouldCache
       ? createComputedGetter(key)
@@ -253,6 +259,7 @@ export function defineComputed (
       )
     }
   }
+  将 sharedPropertyDefinition 的属性传给target 即vm
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 

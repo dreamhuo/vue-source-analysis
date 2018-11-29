@@ -167,6 +167,7 @@ export const capitalize = cached((str: string): string => {
 
 /**
  * Hyphenate a camelCase string.
+ * 这里会把传入的字符串AFDSAFDS转成a-f-d-s-a-f-d-s的形式
  */
 const hyphenateRE = /\B([A-Z])/g
 export const hyphenate = cached((str: string): string => {
