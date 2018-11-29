@@ -129,7 +129,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 }
 
 /**
- * Define a reactive property on an Object.
+ * 【defineReactive 方法，该方法为 mvvm 数据变化检测的核心】
  */
 export function defineReactive (
   obj: Object,
@@ -153,12 +153,14 @@ export function defineReactive (
   }
 
   let childOb = !shallow && observe(val)
+  // **为对象属性添加 set 和 get 方法
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
+        // **vue 在 get 方法中执行 dep.depend() 方法
         dep.depend()
         if (childOb) {
           childOb.dep.depend()
@@ -185,6 +187,7 @@ export function defineReactive (
         val = newVal
       }
       childOb = !shallow && observe(newVal)
+      // **在 set 方法中执行 dep.notify() 方法
       dep.notify()
     }
   })

@@ -293,11 +293,12 @@ function initMethods (vm: Component, methods: Object) {
     vm[key] = methods[key] == null ? noop : bind(methods[key], vm)
   }
 }
-
+// **该方法用来遍历 Vue 实例中的 watch 项，最终所有 watch 都会执行 createWatcher 方法
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
     if (Array.isArray(handler)) {
+      // 这里就是对 watch 对象做遍历，拿到每一个 handler，因为 Vue 是支持 watch 的同一个 key 对应多个 handler，所以如果 handler 是一个数组，则遍历这个数组
       for (let i = 0; i < handler.length; i++) {
         createWatcher(vm, key, handler[i])
       }
@@ -313,6 +314,7 @@ function createWatcher (
   handler: any,
   options?: Object
 ) {
+  // **对 hanlder 的类型做判断，拿到它最终的回调函数
   if (isPlainObject(handler)) {
     options = handler
     handler = handler.handler
@@ -349,21 +351,27 @@ export function stateMixin (Vue: Class<Component>) {
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
 
+// 回调函数 cb 是一个对象，那么返回并执行 createWatcher 函数
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
     cb: any,
     options?: Object
   ): Function {
     const vm: Component = this
+    // **这个方法首先判断 cb 如果是一个对象，则调用 createWatcher 方法
+    // **这是因为 $watch 方法是用户可以直接调用的，它可以传递一个对象，也可以传递函数。
     if (isPlainObject(cb)) {
       return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {}
     options.user = true
+    // **执行 const watcher = new Watcher(vm, expOrFn, cb, options) 实例化了一个 watcher
     const watcher = new Watcher(vm, expOrFn, cb, options)
+    // ** 如果是有 immediate 参数，那么立即执行一次Watcher的回调函数
     if (options.immediate) {
       cb.call(vm, watcher.value)
     }
+    // **返回一个取消观察函数，用来停止触发回调
     return function unwatchFn () {
       watcher.teardown()
     }

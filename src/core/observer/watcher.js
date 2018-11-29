@@ -99,13 +99,15 @@ export default class Watcher {
   }
 
   /**
-   * Evaluate the getter, and re-collect dependencies.
+   * Watcher的构造函数最终调用了 get 方法
    */
   get () {
+    // 将当前 Watcher 实例传递给 Dep 的 Dep.target。
     pushTarget(this)
     let value
     const vm = this.vm
     try {
+      // 执行 Watcher 所监测的数据的 getter 方法。
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -119,6 +121,7 @@ export default class Watcher {
       if (this.deep) {
         traverse(value)
       }
+      // ** 将 Dep.target 恢复到上一个值，并且将当前 Watcher 从 Dep 的 subs 中去除
       popTarget()
       this.cleanupDeps()
     }
