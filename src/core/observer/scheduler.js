@@ -93,6 +93,9 @@ function flushSchedulerQueue () {
   }
 }
 
+// Watcher.update会调用queueWatcher再调flushSchedulerQueue再调callUpdatedHooks
+// 最终执行callHook(vm, 'updated')生命周期钩子
+// vm._watcher 的回调执行完毕后，才会执行 updated 钩子函数。
 function callUpdatedHooks (queue) {
   let i = queue.length
   while (i--) {

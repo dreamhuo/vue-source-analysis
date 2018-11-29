@@ -259,7 +259,7 @@ export function defineComputed (
       )
     }
   }
-  将 sharedPropertyDefinition 的属性传给target 即vm
+  // **将 sharedPropertyDefinition 的属性传给target 即vm
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
@@ -273,9 +273,11 @@ function createComputedGetter (key) {
   }
 }
 
+// 初始化 Methods
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {
+    // 在开发环境中排除重名和空值错误的并提示借误信息
     if (process.env.NODE_ENV !== 'production') {
       if (methods[key] == null) {
         warn(
@@ -297,6 +299,7 @@ function initMethods (vm: Component, methods: Object) {
         )
       }
     }
+    // **将 methods 中的方法传给 vm，方法内容如果为空则方法什么都不做。否则调用 bind 方法执行该函数
     vm[key] = methods[key] == null ? noop : bind(methods[key], vm)
   }
 }

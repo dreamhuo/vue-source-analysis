@@ -164,6 +164,7 @@ export function mountComponent (
     }
   }
   // 生命周期钩子 beforeMount
+  // **在挂载开始之前被调用：相关的 render 函数首次被调用。该钩子在服务器端渲染期间不被调用。
   callHook(vm, 'beforeMount')
 
   let updateComponent
@@ -198,6 +199,8 @@ export function mountComponent (
   // 实例化一个渲染Watcher
   new Watcher(vm, updateComponent, noop, {
     before () {
+      // 如果是已经挂载的，就触发beforeUpdate方法。
+      // 数据更新时调用，发生在虚拟 DOM 打补丁之前。这里适合在更新之前访问现有的 DOM，比如手动移除已添加的事件监听器。
       if (vm._isMounted) {
         callHook(vm, 'beforeUpdate')
       }
@@ -209,6 +212,8 @@ export function mountComponent (
   // mounted is called for render-created child components in its inserted hook
   if (vm.$vnode == null) {
     vm._isMounted = true
+    // el 被新创建的 vm.$el 替换，并挂载到实例上去之后调用该钩子。
+    // 如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$el 也在文档内。
     callHook(vm, 'mounted')
   }
   return vm
@@ -321,13 +326,16 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
   }
 }
 
+// ***最终执行生命周期的函数都是调用 callHook 方法
 export function callHook (vm: Component, hook: string) {
   // #7573 disable dep collection when invoking lifecycle hooks
   pushTarget()
+  // 根据传入的字符串 hook，去拿到 vm.$options[hook] 对应的回调函数数组
   const handlers = vm.$options[hook]
   if (handlers) {
     for (let i = 0, j = handlers.length; i < j; i++) {
       try {
+        // **然后遍历执行，执行的时候把 vm 作为函数执行的上下文
         handlers[i].call(vm)
       } catch (e) {
         handleError(e, vm, `${hook} hook`)

@@ -57,15 +57,18 @@ export function initMixin (Vue: Class<Component>) {
     initLifecycle(vm)                    // 出初始化生命周期
     initEvents(vm)                       // 出初始化events事件
     initRender(vm)                       // 初始化render函数
+    // **在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用
     callHook(vm, 'beforeCreate')         // 调用beforeCreate生命周期钩子
     initInjections(vm)                   // resolve injections before data/props
     initState(vm)                        // 初始化State （props、methods、data、computed、watch）
     initProvide(vm) // resolve provide after data/props
+    // **在实例创建完成后被立即调用。在这一步，实例已完成以下的配置：
+    // **数据观测 (data observer)，属性和方法的运算，watch/event 事件回调。然而，挂载阶段还没开始，$el 属性目前不可见。
     callHook(vm, 'created')              // 调用created生命周期钩子
 
     /* 计算init函数性能耗时 */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-      // 获取 component 名字，如果是根name则为 <Root> 
+      // 获取 component 名字，如果是根name则为 <Root>
       vm._name = formatComponentName(vm, false)
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
