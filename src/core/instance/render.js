@@ -81,7 +81,7 @@ export function renderMixin (Vue: Class<Component>) {
     let vnode
     try {
       // =========================================================
-      // 执行 vue 实例的 render 方法
+      // 执行了Vue实例中的 render 方法生成一个vnode
       // =========================================================
       vnode = render.call(vm._renderProxy, vm.$createElement)
     } catch (e) {
@@ -92,6 +92,7 @@ export function renderMixin (Vue: Class<Component>) {
       if (process.env.NODE_ENV !== 'production') {
         if (vm.$options.renderError) {
           try {
+            // 如果生成失败，会试着生成 renderError 方法
             vnode = vm.$options.renderError.call(vm._renderProxy, vm.$createElement, e)
           } catch (e) {
             handleError(e, vm, `renderError`)
@@ -114,11 +115,13 @@ export function renderMixin (Vue: Class<Component>) {
           vm
         )
       }
+      // 如果vnode为空，则为vnode传一个空的VNode
       vnode = createEmptyVNode()
     }
     // set parent
     // 父级Vnode
     vnode.parent = _parentVnode
+    // **最后返回vnode对象
     return vnode
   }
 }
