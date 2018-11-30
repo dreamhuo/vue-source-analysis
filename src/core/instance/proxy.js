@@ -62,15 +62,21 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }
 
+  // initProxy的目的，就是设置渲染函数的作用域代理，目的是为我们提供更好的提示信息。
+  // vue的render的作用域是vm._renderProxy，在本地开发时候，vue对于template里用到的但是没有在data里定义的数据进行提示，
+  // 这时候就有了Proxy的has和get拦截。
   initProxy = function initProxy (vm) {
+    // hasProxy主要判断浏览是否支持Proxy对象
     if (hasProxy) {
       // determine which proxy handler to use
       const options = vm.$options
+      // webpack配合vue-loader的环境下，将template编译为不是有with语句包裹的遵循严格模式的JS，并为编译后的render方法设置render._withStripped=true。
       const handlers = options.render && options.render._withStripped
         ? getHandler
         : hasHandler
       vm._renderProxy = new Proxy(vm, handlers)
     } else {
+      // 不支持Proxy对象vm._renderProxy = vm
       vm._renderProxy = vm
     }
   }
