@@ -60,9 +60,11 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // 初次渲染会走到 vm.__patch__ 方法中，这个方法就是比对虚拟 DOM ，局部更新 DOM 的方法
     if (!prevVnode) {
       // initial render
+      // 初始化渲染
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
       // updates
+      // 更新渲染
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
     activeInstance = prevActiveInstance

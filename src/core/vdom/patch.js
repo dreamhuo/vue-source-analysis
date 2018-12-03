@@ -71,11 +71,16 @@ export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
 
+  // 获取后端方法 nodeOps node节点操作方法集合
+  // modules定义了 attrs, klass, events, domProps, style, transition 的更新操作工具方法
+  // modules、nodeOps都返回数组
   const { modules, nodeOps } = backend
 
   for (i = 0; i < hooks.length; ++i) {
     cbs[hooks[i]] = []
     for (j = 0; j < modules.length; ++j) {
+      // 通过isDef方法判断modules是否定义了hooks里的钩子函数，有则push进 cbs[hooks[i]]
+      // 这样就形成了cbs = [['create'…], ['activate'…], ['update'…], ['remove'…], ['destroy'…]]
       if (isDef(modules[j][hooks[i]])) {
         cbs[hooks[i]].push(modules[j][hooks[i]])
       }
@@ -122,6 +127,7 @@ export function createPatchFunction (backend) {
 
   let creatingElmInVPre = 0
 
+// ***先看 createElm 方法，这个方法创建了真实 DOM 元素。
   function createElm (
     vnode,
     insertedVnodeQueue,
@@ -683,6 +689,7 @@ export function createPatchFunction (backend) {
   }
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
+    // 当前 VNode 未定义、老的 VNode 定义了，调用销毁钩子。
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -693,24 +700,35 @@ export function createPatchFunction (backend) {
 
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
+      // 老的 VNode 未定义，初始化。
+      // 这里是首次渲染
       isInitialPatch = true
+      // 这里创建DOM节点，把需要插入的放入insertedVnodeQueue
       createElm(vnode, insertedVnodeQueue)
     } else {
-      const isRealElement = isDef(oldVnode.nodeType)
+      // 当前 VNode 和老 VNode 都定义了，执行更新操作
+      // DOM 的 nodeType http://www.w3school.com.cn/jsref/prop_node_nodetype.asp
+      const isRealElement = isDef(oldVnode.nodeType) // 是否为真实 DOM 元素
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
+        // 修改已有根节点
+        // **patchVnode方法，执行vnode对比，把对比后的差异放到insertedVnodeQueue数组中
         patchVnode(oldVnode, vnode, insertedVnodeQueue, removeOnly)
       } else {
+        // 已有真实 DOM 元素，处理 oldVnode
         if (isRealElement) {
           // mounting to a real element
           // check if this is server-rendered content and if we can perform
           // a successful hydration.
+          // 挂载一个真实元素，确认是否为服务器渲染环境或者是否可以执行成功的合并到真实 DOM 中
           if (oldVnode.nodeType === 1 && oldVnode.hasAttribute(SSR_ATTR)) {
             oldVnode.removeAttribute(SSR_ATTR)
             hydrating = true
           }
           if (isTrue(hydrating)) {
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
+              // 调用 insert 钩子
+              // inserted：被绑定元素插入父节点时调用
               invokeInsertHook(vnode, insertedVnodeQueue, true)
               return oldVnode
             } else if (process.env.NODE_ENV !== 'production') {
@@ -725,14 +743,17 @@ export function createPatchFunction (backend) {
           }
           // either not server-rendered, or hydration failed.
           // create an empty node and replace it
+          // 不是服务器渲染或者合并到真实 DOM 失败，创建一个空节点替换原有节点
           oldVnode = emptyNodeAt(oldVnode)
         }
 
         // replacing existing element
+        // 替换已有元素
         const oldElm = oldVnode.elm
         const parentElm = nodeOps.parentNode(oldElm)
 
         // create new node
+        // 创建新节点
         createElm(
           vnode,
           insertedVnodeQueue,
@@ -744,6 +765,7 @@ export function createPatchFunction (backend) {
         )
 
         // update parent placeholder node element, recursively
+        // 递归更新父级占位节点元素，
         if (isDef(vnode.parent)) {
           let ancestor = vnode.parent
           const patchable = isPatchable(vnode)
@@ -774,6 +796,7 @@ export function createPatchFunction (backend) {
         }
 
         // destroy old node
+        // 销毁旧节点
         if (isDef(parentElm)) {
           removeVnodes(parentElm, [oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {
@@ -781,7 +804,7 @@ export function createPatchFunction (backend) {
         }
       }
     }
-
+    // 调用 insert 钩子
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
     return vnode.elm
   }
