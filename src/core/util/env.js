@@ -57,6 +57,7 @@ export function isNative (Ctor: any): boolean {
   return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
 }
 
+// 判断浏览器是否支持Symbol和Reflect
 export const hasSymbol =
   typeof Symbol !== 'undefined' && isNative(Symbol) &&
   typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys)
