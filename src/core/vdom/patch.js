@@ -418,14 +418,18 @@ export function createPatchFunction (backend) {
   }
 
   function updateChildren (parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
+    // 其中 oldCh 和 newCh 即表示了新旧 vnode 数组，两组数组通过比对的方式来差异化更新 DOM。
+    // 老vnode. 开始索引值、结束索引值、开始vnode、结束vnode
     let oldStartIdx = 0
-    let newStartIdx = 0
     let oldEndIdx = oldCh.length - 1
     let oldStartVnode = oldCh[0]
     let oldEndVnode = oldCh[oldEndIdx]
+    // 新vnode. 开始索引值、结束索引值、开始vnode、结束vnode
+    let newStartIdx = 0
     let newEndIdx = newCh.length - 1
     let newStartVnode = newCh[0]
     let newEndVnode = newCh[newEndIdx]
+
     let oldKeyToIdx, idxInOld, vnodeToMove, refElm
 
     // removeOnly is a special flag used only by <transition-group>
@@ -439,30 +443,45 @@ export function createPatchFunction (backend) {
       checkDuplicateKeys(newCh)
     }
 
+    // 进行循环遍历，遍历条件为 oldStartIdx <= oldEndIdx 和 newStartIdx <= newEndIdx
+    // 在遍历过程中，oldStartIdx 和 newStartIdx 递增，oldEndIdx 和 newEndIdx 递减。当条件不符合跳出遍历循环
+    // 如果 oldStartVnode 和 newStartVnode 相似，执行 patch
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (isUndef(oldStartVnode)) {
-        // 开始老 vnode 向右一位
+
+        // oldStartVnode 未定义， 将 oldStartVnode 设置为下一个子节点
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
+
       } else if (isUndef(oldEndVnode)) {
-        // 结束老 vnode 向左一位
+
+        // oldEndVnode 未定义， 将 oldEndVnode 设置为上一个子节点
         oldEndVnode = oldCh[--oldEndIdx]
+
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
-        // 新旧开始 vnode 相似，进行pacth。开始 vnode 向右一位
+
+        // 如果oldStartVnode和newStartVnode是同一节点，调用patchVnode进行patch，
+        // 然后将oldStartVnode和newStartVnode都设置为下一个子节点，重复上述流程
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
+
       } else if (sameVnode(oldEndVnode, newEndVnode)) {
-        // 新旧结束 vnode 相似，进行patch。结束 vnode 向左一位
+
+        // 如果oldEndVnode和newEndVnode是同一节点，调用patchVnode进行patch
+        // 然后将oldEndVnode和newEndVnode都设置为上一个子节点，重复上述流程
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue)
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
+
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
+
         // 新结束 vnode 和老开始 vnode 相似，进行patch。
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue)
         // 老开始 vnode 插入到真实 DOM 中，老开始 vnode 向右一位，新结束 vnode 向左一位
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
         oldStartVnode = oldCh[++oldStartIdx]
         newEndVnode = newCh[--newEndIdx]
+
       } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
         // 老结束 vnode 和新开始 vnode 相似，进行 patch。
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue)
