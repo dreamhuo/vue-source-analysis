@@ -494,26 +494,28 @@ export function createPatchFunction (backend) {
         newStartVnode = newCh[++newStartIdx]
 
       } else {
-        // 获取老 Idx 的 key
+        // 如果以上都不匹配，就尝试在oldChildren中寻找跟newStartVnode具有相同key的节点，如果找不到相同key的节点，
+        // 说明newStartVnode是一个新节点，就创建一个，然后把newStartVnode设置为下一个节点
+        // 获取老 vnode 的 oldChildren 数组的 key 的集合。
+        // createKeyToOldIdx 返回结构为 createKeyToOldIdx[key] = oldChildren_index;
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
-        // 给老 idx 赋值
-        idxInOld = isDef(newStartVnode.key)
-          ? oldKeyToIdx[newStartVnode.key]
-          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
-        if (isUndef(idxInOld)) { // New element
-          // 如果老 idx 为 undefined，说明没有这个元素，创建新 DOM 元素。
+        // 如果新 newStartVnode.key 存在，找到对应老 vnode 对应的 index.
+        idxInOld = isDef(newStartVnode.key) ? oldKeyToIdx[newStartVnode.key] : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
+        if (isUndef(idxInOld)) {
+          // 没有找到，说明没有这个元素，创建新 DOM 元素。
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
         } else {
-          // 获取 vnode
+          // 找到了对应的老 vnode, 即 oldCh[idxInOld]
           vnodeToMove = oldCh[idxInOld]
           if (sameVnode(vnodeToMove, newStartVnode)) {
             // 如果生成的 vnode 和新开始 vnode 相似，执行 patch。
             patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue)
             // 赋值 undefined，插入 vnodeToMove 元素
             oldCh[idxInOld] = undefined
+            // 如果 removeOnly 是 false，那么可以把 vnodeToMove.elm移动到 oldStartVnode.elm 之前
             canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
           } else {
-            // 相同的key不同的元素，视为新元素
+            // vnodeToMove 与 newStartVnode 不是同一vnode, 即为相同的 key 不同的元素，视为新元素
             // same key but different element. treat as new element
             createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
           }
