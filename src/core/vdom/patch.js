@@ -458,7 +458,7 @@ export function createPatchFunction (backend) {
         oldEndVnode = oldCh[--oldEndIdx]
 
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
-
+        // 【 oldStartVnode 】 【 newStartVnode 】
         // 如果oldStartVnode和newStartVnode是同一节点，调用patchVnode进行patch，
         // 然后将oldStartVnode和newStartVnode都设置为下一个子节点，重复上述流程
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
@@ -466,7 +466,7 @@ export function createPatchFunction (backend) {
         newStartVnode = newCh[++newStartIdx]
 
       } else if (sameVnode(oldEndVnode, newEndVnode)) {
-
+        // 【 oldEndVnode 】 【 newEndVnode 】
         // 如果oldEndVnode和newEndVnode是同一节点，调用patchVnode进行patch
         // 然后将oldEndVnode和newEndVnode都设置为上一个子节点，重复上述流程
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue)
@@ -474,21 +474,25 @@ export function createPatchFunction (backend) {
         newEndVnode = newCh[--newEndIdx]
 
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
-
-        // 新结束 vnode 和老开始 vnode 相似，进行patch。
+        // 【 oldStartVnode 】 【 newEndVnode 】
+        // 如果oldStartVnode和newEndVnode是同一节点，调用patchVnode进行patch，
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue)
-        // 老开始 vnode 插入到真实 DOM 中，老开始 vnode 向右一位，新结束 vnode 向左一位
+        // 如果removeOnly是false，那么可以把oldStartVnode.elm移动到oldEndVnode.elm之后，
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
+        // 然后把oldStartVnode设置为下一个节点，newEndVnode设置为上一个节点，重复上述流程
         oldStartVnode = oldCh[++oldStartIdx]
         newEndVnode = newCh[--newEndIdx]
 
       } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
-        // 老结束 vnode 和新开始 vnode 相似，进行 patch。
+        // 【 oldEndVnode 】 【 newStartVnode 】
+        // 如果newStartVnode和oldEndVnode是同一节点，调用patchVnode进行patch
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue)
-        // 老结束 vnode 插入到真实 DOM 中，老结束 vnode 向左一位，新开始 vnode 向右一位
+        // 如果removeOnly是false，那么可以把oldEndVnode.elm移动到oldStartVnode.elm之前
         canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
+        // 然后把newStartVnode设置为下一个节点，oldEndVnode设置为上一个节点，重复上述流程
         oldEndVnode = oldCh[--oldEndIdx]
         newStartVnode = newCh[++newStartIdx]
+
       } else {
         // 获取老 Idx 的 key
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
