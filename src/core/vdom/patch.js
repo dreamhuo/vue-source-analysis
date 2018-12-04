@@ -431,6 +431,8 @@ export function createPatchFunction (backend) {
     // removeOnly is a special flag used only by <transition-group>
     // to ensure removed elements stay in correct relative positions
     // during leaving transitions
+    // removeOnly 是一个只用于 <transition-group> 的特殊标签，
+    // 确保移除元素过程中保持一个正确的相对位置。
     const canMove = !removeOnly
 
     if (process.env.NODE_ENV !== 'production') {
@@ -439,52 +441,70 @@ export function createPatchFunction (backend) {
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (isUndef(oldStartVnode)) {
+        // 开始老 vnode 向右一位
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
       } else if (isUndef(oldEndVnode)) {
+        // 结束老 vnode 向左一位
         oldEndVnode = oldCh[--oldEndIdx]
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
+        // 新旧开始 vnode 相似，进行pacth。开始 vnode 向右一位
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
       } else if (sameVnode(oldEndVnode, newEndVnode)) {
+        // 新旧结束 vnode 相似，进行patch。结束 vnode 向左一位
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue)
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
+        // 新结束 vnode 和老开始 vnode 相似，进行patch。
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue)
+        // 老开始 vnode 插入到真实 DOM 中，老开始 vnode 向右一位，新结束 vnode 向左一位
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
         oldStartVnode = oldCh[++oldStartIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+        // 老结束 vnode 和新开始 vnode 相似，进行 patch。
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue)
+        // 老结束 vnode 插入到真实 DOM 中，老结束 vnode 向左一位，新开始 vnode 向右一位
         canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
         oldEndVnode = oldCh[--oldEndIdx]
         newStartVnode = newCh[++newStartIdx]
       } else {
+        // 获取老 Idx 的 key
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
+        // 给老 idx 赋值
         idxInOld = isDef(newStartVnode.key)
           ? oldKeyToIdx[newStartVnode.key]
           : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
         if (isUndef(idxInOld)) { // New element
+          // 如果老 idx 为 undefined，说明没有这个元素，创建新 DOM 元素。
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
         } else {
+          // 获取 vnode
           vnodeToMove = oldCh[idxInOld]
           if (sameVnode(vnodeToMove, newStartVnode)) {
+            // 如果生成的 vnode 和新开始 vnode 相似，执行 patch。
             patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue)
+            // 赋值 undefined，插入 vnodeToMove 元素
             oldCh[idxInOld] = undefined
             canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
           } else {
+            // 相同的key不同的元素，视为新元素
             // same key but different element. treat as new element
             createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
           }
         }
+        // 新开始 vnode 向右一位
         newStartVnode = newCh[++newStartIdx]
       }
     }
+    // 如果老开始 idx 大于老结束 idx，如果是有效数据则添加 vnode 到新 vnode 中。
     if (oldStartIdx > oldEndIdx) {
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
+      // 移除 vnode
       removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)
     }
   }
