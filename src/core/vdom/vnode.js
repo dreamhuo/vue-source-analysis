@@ -95,11 +95,11 @@ export default class VNode {
     componentOptions?: VNodeComponentOptions,
     asyncFactory?: Function
   ) {
-    this.tag = tag                                  // 当前节点标签名 DOM 中的文本内容被当做了一个只有 text 没有 tag 的节点。
-    this.data = data                                // 当前节点数据（VNodeData类型） 像 class、id 等HTML属性都放在了 data 中
+    this.tag = tag                                  // 当前节点标签名，DOM 中的文本内容被当做了一个只有 text 没有 tag 的节点。
+    this.data = data                                // 当前节点数据（ VNodeData 类型） 像 class、id 等 HTML 属性都放在了 data 中
     this.children = children                        // 当前节点子节点
     this.text = text                                // 当前节点文本
-    this.elm = elm                                  // 当前节点对应的真实DOM节点 elm 属性则指向了其相对应的真实 DOM 节点。
+    this.elm = elm                                  // 当前节点对应的真实DOM节点，elm 属性则指向了其相对应的真实 DOM 节点。
     this.ns = undefined                             // 当前节点命名空间
     this.context = context                          // 当前节点上下文   所有对象的 context 选项都指向了 Vue 实例
     this.fnContext = undefined                      // 函数化组件上下文

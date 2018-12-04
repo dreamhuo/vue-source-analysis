@@ -33,6 +33,7 @@ export function createElement (
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
+  //isPrimitive方法会判断data是否为 string||number||symbol||boolean
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
