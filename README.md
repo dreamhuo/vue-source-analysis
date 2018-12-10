@@ -26,6 +26,7 @@ https://ustbhuangyi.github.io/vue-analysis/
 ```
 
 **Vue.js 生命周期**
+
 ![Vue.js 生命周期](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/lifecycle.jpg)
 
 **watch实现**
@@ -33,5 +34,6 @@ https://ustbhuangyi.github.io/vue-analysis/
 ![watch实现](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/observer.jpg)
 
 **vuex实现**
+
 ![vuex实现](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/vuex.jpg)
 
