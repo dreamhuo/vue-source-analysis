@@ -1,9 +1,13 @@
 # vue-source-analysis
 vue源码分析
+
 最近在看vue源码，网上教程是很多，由于篇幅所细涉及细节太少。
+
 这里是vue所有源码，每次提交针对一个问题去找实现代码，相对于网上大神的源码分析，我这里针对关键位置尽可能详细的注释，争取让小白也能看得懂。
 大家可以结合：前滴滴前端负责人黄轶的Vue.js 技术揭秘
+
 https://ustbhuangyi.github.io/vue-analysis/
+
 对照着去看，定能让你收益非浅。欢迎加我QQ：631989611 一同探讨
 这里前置知识：
 
@@ -21,6 +25,10 @@ https://ustbhuangyi.github.io/vue-analysis/
 ```
 
 **Vue.js 生命周期**
-
+https://github.com/dreamhuo/vue-source-analysis/blob/master/img/lifecycle.jpg
 
 **watch实现**
+https://github.com/dreamhuo/vue-source-analysis/blob/master/img/observer.jpg
+
+**vuex实现**
+https://github.com/dreamhuo/vue-source-analysis/blob/master/img/vuex.jpg
