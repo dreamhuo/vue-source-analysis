@@ -1,3 +1,4 @@
+
 # vue-source-analysis
 vue源码分析
 
@@ -25,10 +26,12 @@ https://ustbhuangyi.github.io/vue-analysis/
 ```
 
 **Vue.js 生命周期**
-https://github.com/dreamhuo/vue-source-analysis/blob/master/img/lifecycle.jpg
+![Vue.js 生命周期](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/lifecycle.jpg)
 
 **watch实现**
-https://github.com/dreamhuo/vue-source-analysis/blob/master/img/observer.jpg
+
+![watch实现](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/observer.jpg)
 
 **vuex实现**
-https://github.com/dreamhuo/vue-source-analysis/blob/master/img/vuex.jpg
+![vuex实现](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/vuex.jpg)
+
