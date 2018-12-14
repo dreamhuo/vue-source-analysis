@@ -37,3 +37,9 @@ https://ustbhuangyi.github.io/vue-analysis/
 
 ![vuex实现](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/vuex.jpg)
 
+
+**如果对你有帮助，欢迎打赏，感谢你对我的一点点肯定，将继续努力**
+
+![微信捐助](https://github.com/dreamhuo/vue-source-analysis/blob/master/img/wx.jpg)
+
+
