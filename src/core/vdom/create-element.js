@@ -27,10 +27,10 @@ const ALWAYS_NORMALIZE = 2
 // without getting yelled at by flow
 export function createElement (
   context: Component,
-  tag: any,
-  data: any,
-  children: any,
-  normalizationType: any,
+  tag: any,                    // a
+  data: any,                   // b
+  children: any,               // c
+  normalizationType: any,      // d
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
   //isPrimitive方法会判断data是否为 string||number||symbol||boolean
