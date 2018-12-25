@@ -41,9 +41,12 @@ export function createElement (
     children = data
     data = undefined
   }
+  // 最后一个参数传 true时，即我们手写render函数时，不接收 d 参数 normalizationType
+  // normalizationType 会被直接附值 2
   if (isTrue(alwaysNormalize)) {
     normalizationType = ALWAYS_NORMALIZE
   }
+  // 最终内部调用 _createElement 创建 vnode
   return _createElement(context, tag, data, children, normalizationType)
 }
 
@@ -54,6 +57,9 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
+  // 对 data 进行校验，data不能为响应式的，
+  // 在对obj进行响应式处理时，会在对象上加一个__ob__属性
+  // 如果有__ob__属性则这个对象是响应式对象
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
@@ -63,14 +69,17 @@ export function _createElement (
     return createEmptyVNode()
   }
   // object syntax in v-bind
+  // components 里会存在 data.is 属性，用 data.is 替代 tag
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
   }
+  // data.is 若不是真值时，返回空的 VNode
   if (!tag) {
     // in case of component :is set to falsy value
     return createEmptyVNode()
   }
   // warn against non-primitive key
+  // 对 data , 对 key 进行校验，类型不为 string||number||symbol||boolean 基础类型则报错
   if (process.env.NODE_ENV !== 'production' &&
     isDef(data) && isDef(data.key) && !isPrimitive(data.key)
   ) {
@@ -90,6 +99,8 @@ export function _createElement (
     data.scopedSlots = { default: children[0] }
     children.length = 0
   }
+  // SIMPLE_NORMALIZE 1
+  // ALWAYS_NORMALIZE 2
   if (normalizationType === ALWAYS_NORMALIZE) {
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
