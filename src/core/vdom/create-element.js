@@ -107,6 +107,7 @@ export function _createElement (
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
+  // 对 tag 进行判断，这里 tag 可以是一个字符串，也可以是一个组件
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
