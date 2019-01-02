@@ -47,6 +47,7 @@ function isTextNode (node): boolean {
 function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNode> {
   // 定义 res 数组，最终返回 res 数组
   const res = []
+  // i 遍历循环索引 || c 当前循环children[i] || lastIndex 在res的最后一项索引 || last res数组最后一项
   let i, c, lastIndex, last
   // 遍历 children 数组
   for (i = 0; i < children.length; i++) {

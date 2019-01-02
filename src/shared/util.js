@@ -254,7 +254,7 @@ export function noop (a?: any, b?: any, c?: any) {}
 export const no = (a?: any, b?: any, c?: any) => false
 
 /**
- * Return same value
+ * 返回传入的参数
  */
 export const identity = (_: any) => _
 
