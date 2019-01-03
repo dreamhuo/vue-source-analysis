@@ -51,10 +51,13 @@ export function lifecycleMixin (Vue: Class<Component>) {
   // _update方法接收一个VNode，之后通过调用__patch__方法，把VNode渲染成真实的DOM
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
+    // 定义变量为数据改变时调用，首次挂载时为空。
     const prevEl = vm.$el
     const prevVnode = vm._vnode
     const prevActiveInstance = activeInstance
+    // 当前激活实例为当前 vm
     activeInstance = vm
+    // 把 vnode 挂载到 vm._vnode 上
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.

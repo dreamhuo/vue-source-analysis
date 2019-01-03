@@ -80,7 +80,7 @@ export function createPatchFunction (backend) {
     cbs[hooks[i]] = []
     for (j = 0; j < modules.length; ++j) {
       // 通过isDef方法判断modules是否定义了hooks里的钩子函数，有则push进 cbs[hooks[i]]
-      // 这样就形成了cbs = [['create'…], ['activate'…], ['update'…], ['remove'…], ['destroy'…]]
+      // 这样就形成了cbs = ['create' : […],   'activate' : […],   'update' : […],   'remove' : […],   'destroy' : […]]
       if (isDef(modules[j][hooks[i]])) {
         cbs[hooks[i]].push(modules[j][hooks[i]])
       }
