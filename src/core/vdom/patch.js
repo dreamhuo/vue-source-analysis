@@ -158,6 +158,7 @@ export function createPatchFunction (backend) {
     const children = vnode.children
     const tag = vnode.tag
     if (isDef(tag)) {
+      // 开发环境这里会检测，组件未注册，会提示报错
       if (process.env.NODE_ENV !== 'production') {
         if (data && data.pre) {
           creatingElmInVPre++
@@ -206,6 +207,9 @@ export function createPatchFunction (backend) {
           invokeCreateHooks(vnode, insertedVnodeQueue)
         }
         // insert 用于将元素插入真实 DOM 中。
+        // parentElm    父级挂载节点
+        // vnode.elm    当前 vnode 节点
+        // refElm       参考节点
         insert(parentElm, vnode.elm, refElm)
       }
 
@@ -768,7 +772,9 @@ export function createPatchFunction (backend) {
       return
     }
 
+    // 首次渲染
     let isInitialPatch = false
+    // insert 勾子用的东西
     const insertedVnodeQueue = []
 
     // 如果oldVnode不存在但是vnode存在，说明意图是要创建新节点，那么就调用createElm来创建新节点
@@ -827,7 +833,7 @@ export function createPatchFunction (backend) {
         const parentElm = nodeOps.parentNode(oldElm)
 
         // create new node
-        // 创建新节点
+        // 创建新节点, 把 vnode挂载到真实的 dom 上
         createElm(
           vnode,
           insertedVnodeQueue,
