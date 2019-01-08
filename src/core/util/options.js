@@ -253,6 +253,7 @@ function checkComponents (options: Object) {
 }
 
 export function validateComponentName (name: string) {
+  // 以字母开头，任意单词字符结尾，[\w]　匹配任意单词字符
   if (!/^[a-zA-Z][\w-]*$/.test(name)) {
     warn(
       'Invalid component name: "' + name + '". Component names ' +
@@ -260,6 +261,8 @@ export function validateComponentName (name: string) {
       'and must start with a letter.'
     )
   }
+  // isBuiltInTag 判断 name 是不是 slot,component
+  // config.isReservedTag判断 name 是不是 html 保留标签
   if (isBuiltInTag(name) || config.isReservedTag(name)) {
     warn(
       'Do not use built-in or reserved HTML elements as component ' +

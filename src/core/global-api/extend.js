@@ -16,20 +16,25 @@ export function initExtend (Vue: GlobalAPI) {
   /**
    * Class inheritance
    */
+   // 传入一个对象，返回一个构造函数
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
-    const Super = this
-    const SuperId = Super.cid
+    const Super = this                      // 这里 this 指向 Vue
+    const SuperId = Super.cid               // Vue 的 cid
+    // 在扩展的 extendOptions 对象上添加了一个 _Ctor 对象，默认为空对象
     const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
+    // 实际上做了一层缓存的优化
     if (cachedCtors[SuperId]) {
       return cachedCtors[SuperId]
     }
 
+    // 拿到组件 name
     const name = extendOptions.name || Super.options.name
+    // 开发环境对 name 做一层校验
     if (process.env.NODE_ENV !== 'production' && name) {
       validateComponentName(name)
     }
-
+    // 定义子的构造函数
     const Sub = function VueComponent (options) {
       this._init(options)
     }

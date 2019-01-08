@@ -110,7 +110,9 @@ export function makeMap (
 }
 
 /**
- * Check if a tag is a built-in tag.
+ * isBuiltInTag 接收一个参数，这个参数就是 makeMap里的 val
+ * 最后一个为 true，标识 slot,component 都转换为小写匹配
+ * 这里检测 tag 是不是 slot,component
  */
 export const isBuiltInTag = makeMap('slot,component', true)
 
