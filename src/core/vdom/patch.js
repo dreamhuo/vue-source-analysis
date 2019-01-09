@@ -228,8 +228,11 @@ export function createPatchFunction (backend) {
   }
 
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
+    // 首先拿到 data
     let i = vnode.data
+    // 判断 data 是否存在
     if (isDef(i)) {
+      // keepAlive相关
       const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
       if (isDef(i = i.hook) && isDef(i = i.init)) {
         i(vnode, false /* hydrating */)
