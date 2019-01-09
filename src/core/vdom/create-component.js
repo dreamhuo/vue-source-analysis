@@ -96,6 +96,7 @@ const componentVNodeHooks = {
   }
 }
 
+// init prepatch insert destroy
 const hooksToMerge = Object.keys(componentVNodeHooks)
 
 export function createComponent (
@@ -118,6 +119,7 @@ export function createComponent (
 
   // if at this stage it's not a constructor or an async component factory,
   // reject.
+  // 如果不能正确返回函数，则报一个错，“无效组件定义”
   if (typeof Ctor !== 'function') {
     if (process.env.NODE_ENV !== 'production') {
       warn(`Invalid Component definition: ${String(Ctor)}`, context)
@@ -126,6 +128,7 @@ export function createComponent (
   }
 
   // async component
+  // 异步组件处理
   let asyncFactory
   if (isUndef(Ctor.cid)) {
     asyncFactory = Ctor
@@ -148,28 +151,33 @@ export function createComponent (
 
   // resolve constructor options in case global mixins are applied after
   // component constructor creation
+  // 对 options 进行重新处理
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
+  // v-model判断处理
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
 
   // extract props
+  // 对 props 进行处理
   const propsData = extractPropsFromVNodeData(data, Ctor, tag)
 
   // functional component
+  // 对函数组件的处理
   if (isTrue(Ctor.options.functional)) {
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
 
+  // 对监听事件的处理
   // extract listeners, since these needs to be treated as
   // child component listeners instead of DOM listeners
   const listeners = data.on
   // replace with listeners with .native modifier
   // so it gets processed during parent component patch.
   data.on = data.nativeOn
-
+  // 抽象组件处理
   if (isTrue(Ctor.options.abstract)) {
     // abstract components do not keep anything
     // other than props & listeners & slot
@@ -183,6 +191,7 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
+  // 安装组件勾子
   installComponentHooks(data)
 
   // return a placeholder vnode
@@ -223,8 +232,12 @@ export function createComponentInstanceForVnode (
   return new vnode.componentOptions.Ctor(options)
 }
 
+// 安装组件勾子
 function installComponentHooks (data: VNodeData) {
   const hooks = data.hook || (data.hook = {})
+  // 遍历 hooksToMerge
+  // const hooksToMerge = Object.keys(componentVNodeHooks)
+  //componentVNodeHooks对象里定义了组件生命周期的勾子函数 init prepatch insert destroy
   for (let i = 0; i < hooksToMerge.length; i++) {
     const key = hooksToMerge[i]
     const existing = hooks[key]
@@ -236,12 +249,14 @@ function installComponentHooks (data: VNodeData) {
 }
 
 function mergeHook (f1: any, f2: any): Function {
+  // 添加函数先执行系统勾子函数，再执行自定义勾子函数
   const merged = (a, b) => {
-    // flow complains about extra args which is why we use any
     f1(a, b)
     f2(a, b)
   }
+  // merged过了，添加 _merged 属性，设为 true
   merged._merged = true
+  // 返回重新定义的 merged 函数
   return merged
 }
 
