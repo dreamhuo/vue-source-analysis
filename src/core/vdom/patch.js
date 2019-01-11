@@ -200,7 +200,7 @@ export function createPatchFunction (backend) {
           insert(parentElm, vnode.elm, refElm)
         }
       } else {
-        // createChildren 用于创建子节点，如果子节点是数组，则遍历执行 createElm 方法，
+        // createChildren 用于创建子节点，如果子节点是数组，则遍历执行 createElm 方法，如果 child 中有组件，还走 createComponent 创建组件 vm 实例
         // 如果子节点的 text 属性有数据，则使用 nodeOps.appendChild(...) 在真实 DOM 中插入文本内容。
         createChildren(vnode, children, insertedVnodeQueue)
         if (isDef(data)) {
@@ -257,6 +257,7 @@ export function createPatchFunction (backend) {
       insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert)
       vnode.data.pendingInsert = null
     }
+    // 将 vnode.componentInstance.$el 挂载到 vnode 上
     vnode.elm = vnode.componentInstance.$el
     if (isPatchable(vnode)) {
       invokeCreateHooks(vnode, insertedVnodeQueue)

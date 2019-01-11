@@ -142,7 +142,7 @@ export function renderMixin (Vue: Class<Component>) {
       vnode = createEmptyVNode()
     }
     // set parent
-    // 父级Vnode
+    // 父级Vnode,即组件占位 vnode
     vnode.parent = _parentVnode
     // **最后返回vnode对象
     return vnode

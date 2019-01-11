@@ -99,6 +99,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     if (vm._isBeingDestroyed) {
       return
     }
+    // beforeDestroy 先父后子
     callHook(vm, 'beforeDestroy')
     vm._isBeingDestroyed = true
     // remove self from parent
@@ -121,9 +122,9 @@ export function lifecycleMixin (Vue: Class<Component>) {
     }
     // call the last hook...
     vm._isDestroyed = true
-    // invoke destroy hooks on current rendered tree
+    // 执行子组件的销毁工作，递归完成子组件销毁
     vm.__patch__(vm._vnode, null)
-    // fire destroyed hook
+    //  destroyed 先子后父
     callHook(vm, 'destroyed')
     // turn off all instance listeners.
     vm.$off()

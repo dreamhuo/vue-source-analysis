@@ -154,6 +154,7 @@ export function cached<F: Function> (fn: F): F {
 
 /**
  * Camelize a hyphen-delimited string.
+ * 羊肉串 改为陀峰
  */
 const camelizeRE = /-(\w)/g
 export const camelize = cached((str: string): string => {
