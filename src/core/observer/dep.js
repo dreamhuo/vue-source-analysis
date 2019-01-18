@@ -44,6 +44,7 @@ export default class Dep {
       // order
       subs.sort((a, b) => a.id - b.id)
     }
+    // 遍历所有 watch 执行 watch 的 update 方法
     for (let i = 0, l = subs.length; i < l; i++) {
       subs[i].update()
     }

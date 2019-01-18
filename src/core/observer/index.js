@@ -148,6 +148,7 @@ export function defineReactive (
   // cater for pre-defined getter/setters
   const getter = property && property.get
   const setter = property && property.set
+  // 当只传了 obj key时，只有在没有 getter或设置的 setter 的情况下，defineReactive才会获取对象的属性
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
@@ -172,8 +173,11 @@ export function defineReactive (
       return value
     },
     set: function reactiveSetter (newVal) {
+      // 首先会针对通过用户自定义的 get 求值，未定义则不求值
       const value = getter ? getter.call(obj) : val
-      /* eslint-disable no-self-compare */
+      // 新旧值相同 return , 打破了自定义对象的行为。如果我们定义 Object.defineProperty(obj, 'x', ... set: ...)并运行
+      // obj.x = obj.x 那么通常setter将运行，但 newVal === value会破坏此逻辑并阻止setter运行
+      // 所以加了 newVal !== newVal && value !== value 例外
       if (newVal === value || (newVal !== newVal && value !== value)) {
         return
       }
@@ -181,11 +185,13 @@ export function defineReactive (
       if (process.env.NODE_ENV !== 'production' && customSetter) {
         customSetter()
       }
+      // 如果定义了自定义 set 方法，调用自定义 set
       if (setter) {
         setter.call(obj, newVal)
       } else {
         val = newVal
       }
+      // 如果新值也是一个对象，调用 observe 对新值 observe ，变成一个响应式对象
       childOb = !shallow && observe(newVal)
       // **在 set 方法中执行 dep.notify() 方法
       dep.notify()
