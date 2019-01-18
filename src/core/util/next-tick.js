@@ -28,7 +28,8 @@ let useMacroTask = false
 // 定义(macro) task的延迟实现，setImmediate是最优选，但只在IE中可用。所以在同一循环中所有DOM
 // 事件触发后，要把回调推进同一队列中则使用MessageChannel
 /* istanbul ignore if */
-if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) { // 如果有setImmediate且是原生代码则使用它来延迟
+// 判断 浏览器是否支持 setImmediate
+if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   macroTimerFunc = () => {
     setImmediate(flushCallbacks)
   }
