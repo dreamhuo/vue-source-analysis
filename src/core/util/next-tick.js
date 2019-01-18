@@ -25,10 +25,6 @@ let microTimerFunc
 let macroTimerFunc
 let useMacroTask = false
 
-// Determine (macro) task defer implementation.
-// Technically setImmediate should be the ideal choice, but it's only available
-// in IE. The only polyfill that consistently queues the callback after all DOM
-// events triggered in the same loop is by using MessageChannel.
 // 定义(macro) task的延迟实现，setImmediate是最优选，但只在IE中可用。所以在同一循环中所有DOM
 // 事件触发后，要把回调推进同一队列中则使用MessageChannel
 /* istanbul ignore if */
@@ -56,17 +52,10 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) { // 如果�
 
 // Determine microtask defer implementation.
 // 定义microtask延迟的实现
-// Determine microtask defer implementation.
-/* istanbul ignore next, $flow-disable-line */
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
   const p = Promise.resolve()
   microTimerFunc = () => {
     p.then(flushCallbacks)
-    // in problematic UIWebViews, Promise.then doesn't completely break, but
-    // it can get stuck in a weird state where callbacks are pushed into the
-    // microtask queue but the queue isn't being flushed, until the browser
-    // needs to do some other work, e.g. handle a timer. Therefore we can
-    // "force" the microtask queue to be flushed by adding an empty timer.
     // 在一些有问题的UIWebview中，Promise.then没有完全中断，但它可能卡在一个状态：我已经将回调
     // 推进队列中但这个队列并没有刷新。直到浏览器做一些其他工作，例如处理一个计时器。所以需要
     // 手动调用一个空的计数器来“强制”刷新队列
