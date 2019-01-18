@@ -5,10 +5,10 @@ import { noop } from 'shared/util'
 import { handleError } from './error'
 import { isIOS, isNative } from './env'
 
-const callbacks = [] // 回调函数数组
-let pending = false // 是否正在执行的flag
+const callbacks = []             // 回调函数数组
+let pending = false              // pending状态，是否正在执行的flag
 
-function flushCallbacks () { // 执行下一个回调
+function flushCallbacks () {     // 执行下一个回调
   pending = false
   const copies = callbacks.slice(0)
   callbacks.length = 0
@@ -17,15 +17,7 @@ function flushCallbacks () { // 执行下一个回调
   }
 }
 
-// Here we have async deferring wrappers using both microtasks and (macro) tasks.
-// In < 2.4 we used microtasks everywhere, but there are some scenarios where
-// microtasks have too high a priority and fire in between supposedly
-// sequential events (e.g. #4521, #6690) or even between bubbling of the same
-// event (#6566). However, using (macro) tasks everywhere also has subtle problems
-// when state is changed right before repaint (e.g. #6813, out-in transitions).
-// Here we use microtask by default, but expose a way to force (macro) task when
-// needed (e.g. in event handlers attached by v-on).
-// microtasks和(macro) tasks是异步延迟的包裹函数，2.4版本之前只用microtasks，但因为其在一些
+// microtasks 和 (macro) tasks 是异步延迟的包裹函数，2.4版本之前只用 microtasks，但因为其在一些
 // 情况下优先级过高，且可能在一些连续事件中触发，甚至是同一事件的冒泡间触发。然而都用(macro)
 // task在state在重绘前改变也会存在一些问题。所以默认使用microtask，但也会再需要时强制改变为
 // (macro) task

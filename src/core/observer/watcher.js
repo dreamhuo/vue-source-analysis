@@ -107,7 +107,7 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
-      // 执行 Watcher 所监测的数据的 getter 方法。
+      // 执行 Watcher 所监测的数据的 getter 方法。 也就是执行 updateComponent
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -199,18 +199,19 @@ export default class Watcher {
    * Will be called by the scheduler.
    */
   run () {
+    // 销毁 组件时，先把 active 置为 false,
     if (this.active) {
+      // 把回调转给 getAndInvoke 执行
       this.getAndInvoke(this.cb)
     }
   }
 
   getAndInvoke (cb: Function) {
+    // 先通过 get 方法求值
+    // 如果求值不一样 或者 value 是一个对象 或者 deep watcher 的话
     const value = this.get()
     if (
       value !== this.value ||
-      // Deep watchers and watchers on Object/Arrays should fire even
-      // when the value is the same, because the value may
-      // have mutated.
       isObject(value) ||
       this.deep
     ) {
@@ -218,6 +219,7 @@ export default class Watcher {
       const oldValue = this.value
       this.value = value
       this.dirty = false
+      // 如果是 user watcher
       if (this.user) {
         try {
           cb.call(this.vm, value, oldValue)

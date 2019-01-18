@@ -22,7 +22,7 @@ let flushing = false                                        // 标识位 是否�
 let index = 0                                               // 当前 watcher 的索引
 
 /**
- * Reset the scheduler's state.
+ * 重置 scheduler 的状态
  */
 function resetSchedulerState () {
   index = queue.length = activatedChildren.length = 0
@@ -60,7 +60,7 @@ function flushSchedulerQueue () {
     // 拿到 id, 把 has[id] 置为 null
     id = watcher.id
     has[id] = null
-    // 执行 watcher.run()
+    // 执行 watcher.run() 执行 回调，之后会再执行 queueWatcher 所以，会可能产生无限循环的情况
     watcher.run()
     // 判断有没有无限循环更新的状况
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
@@ -89,8 +89,7 @@ function flushSchedulerQueue () {
   callActivatedHooks(activatedQueue)
   callUpdatedHooks(updatedQueue)
 
-  // devtool hook
-  /* istanbul ignore if */
+  // 给开发工具用的
   if (devtools && config.devtools) {
     devtools.emit('flush')
   }
@@ -104,6 +103,7 @@ function callUpdatedHooks (queue) {
   while (i--) {
     const watcher = queue[i]
     const vm = watcher.vm
+    // 这里会判断 _watcher 是否是渲染 watcher, 并且 _isMounted 后 才执行 updated 钩子
     if (vm._watcher === watcher && vm._isMounted) {
       callHook(vm, 'updated')
     }
