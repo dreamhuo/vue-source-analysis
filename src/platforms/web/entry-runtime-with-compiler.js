@@ -10,6 +10,7 @@ import { compileToFunctions } from './compiler/index'
 import { shouldDecodeNewlines, shouldDecodeNewlinesForHref } from './util/compat'
 
 // 这里是把innerHTML做了缓存到 query(id) 上
+// cached 是一个闭包函数，定义了一个 cache = Object.create(null) 对象用于缓存获取到的 innerHTML
 const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
@@ -46,8 +47,11 @@ Vue.prototype.$mount = function (
       if (typeof template === 'string') {
         // 若template为id，则通过调用idToTemplate获取html内容
         if (template.charAt(0) === '#') {
+          // 如果 template 首字母 为 “#”号，那么以 template 为 dom id 去获取 innerHTML
           template = idToTemplate(template)
           /* istanbul ignore if */
+          // 未获取到，则 template 为false, 这时报一个错误：
+          // Template 元素未发现或者为空
           if (process.env.NODE_ENV !== 'production' && !template) {
             warn(
               `Template element not found or is empty: ${options.template}`,
@@ -56,14 +60,18 @@ Vue.prototype.$mount = function (
           }
         }
       } else if (template.nodeType) {
+        // 如果dom节点
         template = template.innerHTML
       } else {
+        // 如果 template 即不是以 # 开头，又不是 dom 节点，提示 template 不合法
         if (process.env.NODE_ENV !== 'production') {
           warn('invalid template option:' + template, this)
         }
         return this
       }
     } else if (el) {
+      // 如果未定义 template，定义了 el, 则通过 getOuterHTML 拿到 dom 字符串
+      // getOuterHTML 内做了兼容
       template = getOuterHTML(el)
     }
     // 获取到template开始编译
@@ -98,6 +106,8 @@ Vue.prototype.$mount = function (
 
 /**
  * 获取一个节点的DOM节点·
+ * getOuterHTML 函数其实是对 outerHTML 函数做了兼容处理
+ *
  */
 function getOuterHTML (el: Element): string {
   if (el.outerHTML) {
