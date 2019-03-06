@@ -1,62 +1,62 @@
 /* @flow */
-    // <div id="app">
-    //     <span>{{ message }}</span>
-    //     <ul>
-    //         <li v-for="item of list" class="item-cls">{{ item }}</li>
-    //     </ul>
-    // </div>
+// <div id="app">
+//     <span>{{ message }}</span>
+//     <ul>
+//         <li v-for="item of list" class="item-cls">{{ item }}</li>
+//     </ul>
+// </div>
 
-    // <script>
-    //     new Vue({
-    //         el: '#app',
-    //         data: {
-    //             message: 'hello Vue.js',
-    //             list: ['jack', 'rose', 'james']
-    //         }
-    //     })
-    // </script>
-    // {
-    //     "tag": "div",
-    //     "data": {
-    //         "attr": { "id": "app" }
-    //     },
-    //     "children": [
-    //         {
-    //             "tag": "span",
-    //             "children": [
-    //                 { "text": "hello Vue.js" }
-    //             ]
-    //         },
-    //         {
-    //             "tag": "ul",
-    //             "children": [
-    //                 {
-    //                     "tag": "li",
-    //                     "data": { "staticClass": "item-cls" },
-    //                     "children": [
-    //                         { "text": "jack" }
-    //                     ]
-    //                 },
-    //                 {
-    //                     "tag": "li",
-    //                     "data": { "staticClass": "item-cls" },
-    //                     "children": [
-    //                         { "text": "rose" }
-    //                     ]
-    //                 },
-    //                 {
-    //                     "tag": "li",
-    //                     "data": { "staticClass": "item-cls" },
-    //                     "children": [
-    //                         { "text": "james" }
-    //                     ]
-    //                 }
-    //             ]
-    //         }
-    //     ],
-    //     "context": "$Vue$3",
-    //     "elm": "div#app"
-    // }
+// <script>
+//     new Vue({
+//         el: '#app',
+//         data: {
+//             message: 'hello Vue.js',
+//             list: ['jack', 'rose', 'james']
+//         }
+//     })
+// </script>
+// {
+//     "tag": "div",
+//     "data": {
+//         "attr": { "id": "app" }
+//     },
+//     "children": [
+//         {
+//             "tag": "span",
+//             "children": [
+//                 { "text": "hello Vue.js" }
+//             ]
+//         },
+//         {
+//             "tag": "ul",
+//             "children": [
+//                 {
+//                     "tag": "li",
+//                     "data": { "staticClass": "item-cls" },
+//                     "children": [
+//                         { "text": "jack" }
+//                     ]
+//                 },
+//                 {
+//                     "tag": "li",
+//                     "data": { "staticClass": "item-cls" },
+//                     "children": [
+//                         { "text": "rose" }
+//                     ]
+//                 },
+//                 {
+//                     "tag": "li",
+//                     "data": { "staticClass": "item-cls" },
+//                     "children": [
+//                         { "text": "james" }
+//                     ]
+//                 }
+//             ]
+//         }
+//     ],
+//     "context": "$Vue$3",
+//     "elm": "div#app"
+// }
 export default class VNode {
   tag: string | void;
   data: VNodeData | void;

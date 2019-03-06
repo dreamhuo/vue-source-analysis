@@ -239,7 +239,7 @@ function installComponentHooks (data: VNodeData) {
   const hooks = data.hook || (data.hook = {})
   // 遍历 hooksToMerge
   // const hooksToMerge = Object.keys(componentVNodeHooks)
-  //componentVNodeHooks对象里定义了组件生命周期的勾子函数 init prepatch insert destroy
+  // componentVNodeHooks对象里定义了组件生命周期的勾子函数 init prepatch insert destroy
   for (let i = 0; i < hooksToMerge.length; i++) {
     const key = hooksToMerge[i]
     const existing = hooks[key]

@@ -80,8 +80,8 @@ export function withMacroTask (fn: Function): Function {
   })
 }
 
- // vue源码中的nexttick接收两个参数，要延迟执行的回调函数（callback），和执行该函数的指定上下文
-//(context),如果没有上下文参数，则会默认为全局上下文。
+// vue源码中的nexttick接收两个参数，要延迟执行的回调函数（callback），和执行该函数的指定上下文
+// (context),如果没有上下文参数，则会默认为全局上下文。
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   callbacks.push(() => { // 将回调函数转为数组来遍历执行
@@ -105,7 +105,7 @@ export function nextTick (cb?: Function, ctx?: Object) {
   }
   // $flow-disable-line
   if (!cb && typeof Promise !== 'undefined') {
-    //如果么有回调，且支持promise，返回promise的resolve函数
+    // 如果么有回调，且支持promise，返回promise的resolve函数
     return new Promise(resolve => {
       _resolve = resolve
     })

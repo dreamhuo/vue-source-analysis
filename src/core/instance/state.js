@@ -361,7 +361,7 @@ export function stateMixin (Vue: Class<Component>) {
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
 
-// 回调函数 cb 是一个对象，那么返回并执行 createWatcher 函数
+  // 回调函数 cb 是一个对象，那么返回并执行 createWatcher 函数
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
     cb: any,

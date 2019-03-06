@@ -181,7 +181,7 @@ function assertType (value: any, type: Function): {
  * because a simple equality check will fail when running
  * across different vms / iframes.
  */
- // 获取函数名称
+// 获取函数名称
 function getType (fn) {
   // ^是开始  \s是空白  *表示0个或多个
   // \w：用于匹配字母，数字或下划线字符

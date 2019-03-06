@@ -106,7 +106,7 @@ export function eventsMixin (Vue: Class<Component>) {
     if (!cbs) {
       return vm
     }
-     // 没有 fn，将事件监听器变为null，返回vm
+    // 没有 fn，将事件监听器变为null，返回vm
     if (!fn) {
       vm._events[event] = null
       return vm

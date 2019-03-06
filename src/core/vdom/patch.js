@@ -127,7 +127,7 @@ export function createPatchFunction (backend) {
 
   let creatingElmInVPre = 0
 
-// ***先看 createElm 方法，这个方法创建了真实 DOM 元素。
+  // ***先看 createElm 方法，这个方法创建了真实 DOM 元素。
   function createElm (
     vnode,
     insertedVnodeQueue,
@@ -456,15 +456,11 @@ export function createPatchFunction (backend) {
     // 如果 oldStartVnode 和 newStartVnode 相似，执行 patch
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (isUndef(oldStartVnode)) {
-
         // oldStartVnode 未定义， 将 oldStartVnode 设置为下一个子节点
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
-
       } else if (isUndef(oldEndVnode)) {
-
         // oldEndVnode 未定义， 将 oldEndVnode 设置为上一个子节点
         oldEndVnode = oldCh[--oldEndIdx]
-
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
         // 【 oldStartVnode 】 【 newStartVnode 】
         // 如果oldStartVnode和newStartVnode是同一节点，调用patchVnode进行patch，
@@ -472,7 +468,6 @@ export function createPatchFunction (backend) {
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
-
       } else if (sameVnode(oldEndVnode, newEndVnode)) {
         // 【 oldEndVnode 】 【 newEndVnode 】
         // 如果oldEndVnode和newEndVnode是同一节点，调用patchVnode进行patch
@@ -480,7 +475,6 @@ export function createPatchFunction (backend) {
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue)
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
-
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
         // 【 oldStartVnode 】 【 newEndVnode 】
         // 如果oldStartVnode和newEndVnode是同一节点，调用patchVnode进行patch，
@@ -490,7 +484,6 @@ export function createPatchFunction (backend) {
         // 然后把oldStartVnode设置为下一个节点，newEndVnode设置为上一个节点，重复上述流程
         oldStartVnode = oldCh[++oldStartIdx]
         newEndVnode = newCh[--newEndIdx]
-
       } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
         // 【 oldEndVnode 】 【 newStartVnode 】
         // 如果newStartVnode和oldEndVnode是同一节点，调用patchVnode进行patch
@@ -500,7 +493,6 @@ export function createPatchFunction (backend) {
         // 然后把newStartVnode设置为下一个节点，oldEndVnode设置为上一个节点，重复上述流程
         oldEndVnode = oldCh[--oldEndIdx]
         newStartVnode = newCh[++newStartIdx]
-
       } else {
         // 如果以上都不匹配，就尝试在oldChildren中寻找跟newStartVnode具有相同key的节点，如果找不到相同key的节点，
         // 说明newStartVnode是一个新节点，就创建一个，然后把newStartVnode设置为下一个节点

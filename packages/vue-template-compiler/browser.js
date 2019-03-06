@@ -145,7 +145,9 @@ function makeMap (
 }
 
 /**
- * Check if a tag is a built-in tag.
+ * isBuiltInTag 接收一个参数，这个参数就是 makeMap里的 val
+ * 最后一个为 true，标识 slot,component 都转换为小写匹配
+ * 这里检测 tag 是不是 slot,component
  */
 var isBuiltInTag = makeMap('slot,component', true);
 
@@ -176,6 +178,8 @@ function hasOwn (obj, key) {
 
 /**
  * Create a cached version of a pure function.
+ * cached 里做了一个闭包，定义了一个 cache 对象用于缓存
+ *
  */
 function cached (fn) {
   var cache = Object.create(null);
@@ -187,6 +191,7 @@ function cached (fn) {
 
 /**
  * Camelize a hyphen-delimited string.
+ * 羊肉串 改为陀峰
  */
 var camelizeRE = /-(\w)/g;
 var camelize = cached(function (str) {
@@ -264,7 +269,7 @@ function noop (a, b, c) {}
 var no = function (a, b, c) { return false; };
 
 /**
- * Return same value
+ * 返回传入的参数
  */
 var identity = function (_) { return _; };
 
@@ -739,6 +744,7 @@ function parseComponent (
 
 /**
  * Check if a string starts with $ or _
+ * 检测字符串是否以保留字符 $ or _ 开头
  */
 
 
@@ -813,6 +819,7 @@ function isNative (Ctor) {
   return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
 }
 
+// 判断浏览器是否支持Symbol和Reflect
 var hasSymbol =
   typeof Symbol !== 'undefined' && isNative(Symbol) &&
   typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys);
@@ -929,6 +936,12 @@ var config = ({
    * Platform-dependent.
    */
   mustUseProp: no,
+
+  /**
+   * Perform updates asynchronously. Intended to be used by Vue Test Utils
+   * This will significantly reduce performance if set to false.
+   */
+  async: true,
 
   /**
    * Exposed for legacy reasons
@@ -1051,16 +1064,24 @@ Dep.prototype.addSub = function addSub (sub) {
 Dep.prototype.removeSub = function removeSub (sub) {
   remove(this.subs, sub);
 };
-
+// **在 depend 方法中，Dep.target 就是一个 Watcher 实例，
+// **它的 addDep 方法最终会调用到 Dep 的 addSubs 方法。subs 是 Watcher 数组。即将当前 watcher 存到 Dep 的 subs 数组中
 Dep.prototype.depend = function depend () {
   if (Dep.target) {
     Dep.target.addDep(this);
   }
 };
-
+// 在 notify 方法中，将 Watcher 数组 subs 遍历，执行他们的 update 方法。update 最终会去执行 watcher 的回调函数。
 Dep.prototype.notify = function notify () {
   // stabilize the subscriber list first
   var subs = this.subs.slice();
+  if ("development" !== 'production' && !config.async) {
+    // subs aren't sorted in scheduler if not running async
+    // we need to sort them now to make sure they fire in correct
+    // order
+    subs.sort(function (a, b) { return a.id - b.id; });
+  }
+  // 遍历所有 watch 执行 watch 的 update 方法
   for (var i = 0, l = subs.length; i < l; i++) {
     subs[i].update();
   }
@@ -1072,7 +1093,64 @@ Dep.prototype.notify = function notify () {
 Dep.target = null;
 
 /*  */
+    // <div id="app">
+    //     <span>{{ message }}</span>
+    //     <ul>
+    //         <li v-for="item of list" class="item-cls">{{ item }}</li>
+    //     </ul>
+    // </div>
 
+    // <script>
+    //     new Vue({
+    //         el: '#app',
+    //         data: {
+    //             message: 'hello Vue.js',
+    //             list: ['jack', 'rose', 'james']
+    //         }
+    //     })
+    // </script>
+    // {
+    //     "tag": "div",
+    //     "data": {
+    //         "attr": { "id": "app" }
+    //     },
+    //     "children": [
+    //         {
+    //             "tag": "span",
+    //             "children": [
+    //                 { "text": "hello Vue.js" }
+    //             ]
+    //         },
+    //         {
+    //             "tag": "ul",
+    //             "children": [
+    //                 {
+    //                     "tag": "li",
+    //                     "data": { "staticClass": "item-cls" },
+    //                     "children": [
+    //                         { "text": "jack" }
+    //                     ]
+    //                 },
+    //                 {
+    //                     "tag": "li",
+    //                     "data": { "staticClass": "item-cls" },
+    //                     "children": [
+    //                         { "text": "rose" }
+    //                     ]
+    //                 },
+    //                 {
+    //                     "tag": "li",
+    //                     "data": { "staticClass": "item-cls" },
+    //                     "children": [
+    //                         { "text": "james" }
+    //                     ]
+    //                 }
+    //             ]
+    //         }
+    //     ],
+    //     "context": "$Vue$3",
+    //     "elm": "div#app"
+    // }
 var VNode = function VNode (
   tag,
   data,
@@ -1083,43 +1161,47 @@ var VNode = function VNode (
   componentOptions,
   asyncFactory
 ) {
-  this.tag = tag;
-  this.data = data;
-  this.children = children;
-  this.text = text;
-  this.elm = elm;
-  this.ns = undefined;
-  this.context = context;
-  this.fnContext = undefined;
-  this.fnOptions = undefined;
-  this.fnScopeId = undefined;
-  this.key = data && data.key;
-  this.componentOptions = componentOptions;
-  this.componentInstance = undefined;
-  this.parent = undefined;
-  this.raw = false;
-  this.isStatic = false;
-  this.isRootInsert = true;
-  this.isComment = false;
-  this.isCloned = false;
-  this.isOnce = false;
-  this.asyncFactory = asyncFactory;
-  this.asyncMeta = undefined;
-  this.isAsyncPlaceholder = false;
+  this.tag = tag;                                // 当前节点标签名，DOM 中的文本内容被当做了一个只有 text 没有 tag 的节点。
+  this.data = data;                              // 当前节点数据（ VNodeData 类型） 像 class、id 等 HTML 属性都放在了 data 中
+  this.children = children;                      // 当前节点子节点
+  this.text = text;                              // 当前节点文本
+  this.elm = elm;                                // 当前节点对应的真实DOM节点，elm 属性则指向了其相对应的真实 DOM 节点。
+  this.ns = undefined;                           // 当前节点命名空间
+  this.context = context;                        // 当前节点上下文 所有对象的 context 选项都指向了 Vue 实例
+  this.fnContext = undefined;                    // 函数化组件上下文
+  this.fnOptions = undefined;                    // 函数化组件配置项
+  this.fnScopeId = undefined;                    // 函数化组件ScopeId
+  this.key = data && data.key;                   // 子节点key属性
+  this.componentOptions = componentOptions;      // 组件配置项
+  this.componentInstance = undefined;            // 组件实例
+  this.parent = undefined;                       // 当前节点父节点
+  this.raw = false;                              // 是否为原生HTML或只是普通文本
+  this.isStatic = false;                         // 静态节点标志 keep-alive
+  this.isRootInsert = true;                      // 是否作为根节点插入
+  this.isComment = false;                        // 是否为注释节点
+  this.isCloned = false;                         // 是否为克隆节点
+  this.isOnce = false;                           // 是否为v-once节点
+  this.asyncFactory = asyncFactory;              // 异步工厂方法
+  this.asyncMeta = undefined;                    // 异步Meta
+  this.isAsyncPlaceholder = false;               // 是否为异步占位
 };
 
 var prototypeAccessors = { child: { configurable: true } };
 
 // DEPRECATED: alias for componentInstance for backwards compat.
 /* istanbul ignore next */
+// 容器实例向后兼容的别名
+// 获取组件实例
 prototypeAccessors.child.get = function () {
   return this.componentInstance
 };
 
 Object.defineProperties( VNode.prototype, prototypeAccessors );
 
+// 定义一个空的 VNode
 
 
+// 定义一个文本 VNode
 
 
 // optimized shallow clone
@@ -1197,6 +1279,7 @@ var Observer = function Observer (value) {
   this.dep = new Dep();
   this.vmCount = 0;
   def(value, '__ob__', this);
+  // **然后判断数据，如果是数组，触发 observeArray 方法，遍历执行 observe 方法
   if (Array.isArray(value)) {
     var augment = hasProto
       ? protoAugment
@@ -1204,14 +1287,14 @@ var Observer = function Observer (value) {
     augment(value, arrayMethods, arrayKeys);
     this.observeArray(value);
   } else {
+    // **如果是对象，触发walk方法
     this.walk(value);
   }
 };
 
 /**
- * Walk through each property and convert them into
- * getter/setters. This method should only be called when
- * value type is Object.
+ * 方法中遍历了数据对象，为对象每个属性执行 defineReactive 方法
+ * 【找到 defineReactive 方法，该方法为 mvvm 数据变化检测的核心】
  */
 Observer.prototype.walk = function walk (obj) {
   var keys = Object.keys(obj);
@@ -1254,9 +1337,7 @@ function copyAugment (target, src, keys) {
 }
 
 /**
- * Attempt to create an observer instance for a value,
- * returns the new observer if successfully observed,
- * or the existing observer if the value already has one.
+ *重点在 observe 方法
  */
 function observe (value, asRootData) {
   if (!isObject(value) || value instanceof VNode) {
@@ -1272,6 +1353,7 @@ function observe (value, asRootData) {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    // **observe 方法通过传入的值最终返回一个Observer类的实例对象
     ob = new Observer(value);
   }
   if (asRootData && ob) {
@@ -1281,7 +1363,7 @@ function observe (value, asRootData) {
 }
 
 /**
- * Define a reactive property on an Object.
+ * 【defineReactive 方法，该方法为 mvvm 数据变化检测的核心】
  */
 function defineReactive (
   obj,
@@ -1300,17 +1382,20 @@ function defineReactive (
   // cater for pre-defined getter/setters
   var getter = property && property.get;
   var setter = property && property.set;
+  // 当只传了 obj key时，只有在没有 getter或设置的 setter 的情况下，defineReactive才会获取对象的属性
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key];
   }
 
   var childOb = !shallow && observe(val);
+  // **为对象属性添加 set 和 get 方法
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
       var value = getter ? getter.call(obj) : val;
       if (Dep.target) {
+        // **vue 在 get 方法中执行 dep.depend() 方法
         dep.depend();
         if (childOb) {
           childOb.dep.depend();
@@ -1322,8 +1407,11 @@ function defineReactive (
       return value
     },
     set: function reactiveSetter (newVal) {
+      // 首先会针对通过用户自定义的 get 求值，未定义则不求值
       var value = getter ? getter.call(obj) : val;
-      /* eslint-disable no-self-compare */
+      // 新旧值相同 return , 打破了自定义对象的行为。如果我们定义 Object.defineProperty(obj, 'x', ... set: ...)并运行
+      // obj.x = obj.x 那么通常setter将运行，但 newVal === value会破坏此逻辑并阻止setter运行
+      // 所以加了 newVal !== newVal && value !== value 例外
       if (newVal === value || (newVal !== newVal && value !== value)) {
         return
       }
@@ -1331,12 +1419,15 @@ function defineReactive (
       if ("development" !== 'production' && customSetter) {
         customSetter();
       }
+      // 如果定义了自定义 set 方法，调用自定义 set
       if (setter) {
         setter.call(obj, newVal);
       } else {
         val = newVal;
       }
+      // 如果新值也是一个对象，调用 observe 对新值 observe ，变成一个响应式对象
       childOb = !shallow && observe(newVal);
+      // **在 set 方法中执行 dep.notify() 方法
       dep.notify();
     }
   });
@@ -1636,8 +1727,8 @@ function assertObjectType (name, value, vm) {
 }
 
 /**
- * Merge two option objects into a new one.
- * Core utility used in both instantiation and inheritance.
+ * 合并两个option到一个新object里
+ * 用于实例化和继承的核心实用程序。
  */
 
 
@@ -1649,13 +1740,15 @@ function assertObjectType (name, value, vm) {
 
 /*  */
 
+// 验证 prop 是否合法
+
 /*  */
 
 /*  */
 /* globals MessageChannel */
 
-var callbacks = [];
-function flushCallbacks () {
+var callbacks = [];             // 回调函数数组
+function flushCallbacks () {     // 执行下一个回调
   var copies = callbacks.slice(0);
   callbacks.length = 0;
   for (var i = 0; i < copies.length; i++) {
@@ -1663,14 +1756,13 @@ function flushCallbacks () {
   }
 }
 
-// Determine (macro) task defer implementation.
-// Technically setImmediate should be the ideal choice, but it's only available
-// in IE. The only polyfill that consistently queues the callback after all DOM
-// events triggered in the same loop is by using MessageChannel.
+// 定义(macro) task的延迟实现，setImmediate是最优选，但只在IE中可用。所以在同一循环中所有DOM
+// 事件触发后，要把回调推进同一队列中则使用MessageChannel
 /* istanbul ignore if */
+// 判断 浏览器是否支持 setImmediate
 if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   
-} else if (typeof MessageChannel !== 'undefined' && (
+} else if (typeof MessageChannel !== 'undefined' && ( // 其次使用MessageChannel
   isNative(MessageChannel) ||
   // PhantomJS
   MessageChannel.toString() === '[object MessageChannelConstructor]'
@@ -1678,16 +1770,16 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   var channel = new MessageChannel();
   channel.port1.onmessage = flushCallbacks;
   
-} else {
+} else { // 最后考虑使用setTimeout
   /* istanbul ignore next */
   
 }
 
 // Determine microtask defer implementation.
-/* istanbul ignore next, $flow-disable-line */
+// 定义microtask延迟的实现
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
   
-} else {
+} else { // 否则使用macroTimerFunc()
   // fallback to macro
   
 }
@@ -1696,6 +1788,10 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
  * Wrap a function so that if any code inside triggers state change,
  * the changes are queued using a (macro) task instead of a microtask.
  */
+
+
+ // vue源码中的nexttick接收两个参数，要延迟执行的回调函数（callback），和执行该函数的指定上下文
+//(context),如果没有上下文参数，则会默认为全局上下文。
 
 /*  */
 
@@ -1780,7 +1876,8 @@ var isTextInputType = makeMap('text,number,password,search,email,tel,url');
 /*  */
 
 /**
- * Query an element selector if it's not an element already.
+ * 如果传入的不是一个dom节点，则通过query查询
+ * el是字符串或为dom节点
  */
 
 /*  */
@@ -4663,10 +4760,13 @@ var createCompiler = createCompilerCreator(function baseCompile (
   template,
   options
 ) {
+  // 解析模板字符串生成 AST
   var ast = parse(template.trim(), options);
   if (options.optimize !== false) {
+    // 优化语法树
     optimize(ast, options);
   }
+  // 生成代码
   var code = generate(ast, options);
   return {
     ast: ast,
@@ -4698,6 +4798,8 @@ var isAttr = makeMap(
   'spellcheck,src,srcdoc,srclang,srcset,start,step,style,summary,tabindex,' +
   'target,title,type,usemap,value,width,wrap'
 );
+
+
 
 /* istanbul ignore next */
 var isRenderableAttr = function (name) {
@@ -4810,7 +4912,7 @@ function genClassSegments (
   classBinding
 ) {
   if (staticClass && !classBinding) {
-    return [{ type: RAW, value: (" class=" + staticClass) }]
+    return [{ type: RAW, value: (" class=\"" + (JSON.parse(staticClass)) + "\"") }]
   } else {
     return [{
       type: EXPRESSION,

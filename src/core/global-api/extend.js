@@ -16,7 +16,7 @@ export function initExtend (Vue: GlobalAPI) {
   /**
    * Class inheritance
    */
-   // 传入一个对象，返回一个构造函数
+  // 传入一个对象，返回一个构造函数
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
     const Super = this                      // 这里 this 指向 Vue
@@ -80,7 +80,7 @@ export function initExtend (Vue: GlobalAPI) {
     // keep a reference to the super options at extension time.
     // later at instantiation we can check if Super's options have
     // been updated.
-     // 对 superOptions  、 extendOptions  、 sealedOptions  进行了一系列附值
+    // 对 superOptions  、 extendOptions  、 sealedOptions  进行了一系列附值
     Sub.superOptions = Super.options
     Sub.extendOptions = extendOptions
     Sub.sealedOptions = extend({}, Sub.options)

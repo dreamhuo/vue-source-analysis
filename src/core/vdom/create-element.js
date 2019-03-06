@@ -33,7 +33,7 @@ export function createElement (
   normalizationType: any,      // d
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
-  //isPrimitive方法会判断data是否为 string||number||symbol||boolean
+  // isPrimitive方法会判断data是否为 string||number||symbol||boolean
   // 这里 data 只能为 object , 若不是，则表示 data 未传，做参数重载
   // data 详细结构在 flow\vnode.js 里 declare interface VNodeData 有详细定义
   if (Array.isArray(data) || isPrimitive(data)) {
