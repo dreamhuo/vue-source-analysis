@@ -99,6 +99,7 @@ function initProps (Comp) {
   }
 }
 
+// 初始化子组件 computed ,遍历子组件 computed，调用 defineComputed
 function initComputed (Comp) {
   const computed = Comp.options.computed
   for (const key in computed) {

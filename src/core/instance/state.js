@@ -203,6 +203,8 @@ function initComputed (vm: Component, computed: Object) {
     if (!isSSR) {
       // create internal watcher for the computed property.
       // **为 computed 属性创建 Watcher
+      // 这里创建 Watcher 最终是给 computed get 去使用
+      // 在 computed get 中通过 vm._computedWatchers 拿到 Watcher
       watchers[key] = new Watcher(
         vm,
         getter || noop,
@@ -260,6 +262,7 @@ export function defineComputed (
     }
   }
   // **将 sharedPropertyDefinition 的属性传给target 即vm
+  // 这里在 vm 上定义了 computedGetter,这样就可以给多组件共享方法
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
