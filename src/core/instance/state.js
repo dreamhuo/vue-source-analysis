@@ -263,6 +263,10 @@ export function defineComputed (
   }
   // **将 sharedPropertyDefinition 的属性传给target 即vm
   // 这里在 vm 上定义了 computedGetter,这样就可以给多组件共享方法
+  // 每一次实例化组件，都在他的实例上去定义getter
+  // vm.name 依然可以访问到 这个 getter
+  // 为了给多组件去做共享
+  // 不用每次去实例组件，去给他实例上去定义 getter
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
