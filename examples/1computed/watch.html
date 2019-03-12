@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>computed example</title>
+    <!-- Delete ".min" for console warnings in development -->
+    <script src="../../dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+        <div>
+            {{name}}
+        </div>
+        <button @click="change">change</button>
+        <button @click="changeLast">change last name</button>
+    </div>
+  </body>
+</html>
+<script type="text/javascript">
+    var demo = new Vue({
+      el: '#app',
+      data: {
+        firstName: 'cs',
+        lastName: 'huo',
+        useless: 0,
+        nested: {
+          a: {
+            b: 1
+          }
+        }
+      },
+      computed: {
+        name: function() {
+            if (this.useless > 0) {
+                return this.firstName + ',' + this.lastName;
+            }
+            return 'Please click change';
+        }
+      },
+      methods: {
+        change: function () {
+            this.useless++;
+            this.nested.a.a = 2;
+        },
+        changeLast: function() {
+            this.lastName = 'joho';
+        }
+      },
+      watch: {
+        useless(newVal) {
+          console.log('useless::', newVal);
+        },
+        name: {
+          immediate: true,
+          handler(newVal) {
+            console.log('name::', newVal);
+          }
+        },
+        nested: {
+          deep: true,
+          sync: true,       // 这是同步执行
+          handler(newVal) {
+            console.log('nested::', newVal.a.b);
+          }
+        }
+      }
+    })
+</script>
