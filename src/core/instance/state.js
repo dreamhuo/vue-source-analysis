@@ -315,7 +315,8 @@ function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
     if (Array.isArray(handler)) {
-      // 这里就是对 watch 对象做遍历，拿到每一个 handler，因为 Vue 是支持 watch 的同一个 key 对应多个 handler，所以如果 handler 是一个数组，则遍历这个数组
+      // 这里就是对 watch 对象做遍历，拿到每一个 handler，
+      // 因为 Vue 是支持 watch 的同一个 key 对应多个 handler，所以如果 handler 是一个数组，则遍历这个数组
       for (let i = 0; i < handler.length; i++) {
         createWatcher(vm, key, handler[i])
       }
