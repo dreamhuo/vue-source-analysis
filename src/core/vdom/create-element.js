@@ -26,12 +26,12 @@ const ALWAYS_NORMALIZE = 2
 // wrapper function for providing a more flexible interface
 // without getting yelled at by flow
 export function createElement (
-  context: Component,
-  tag: any,                    // a
-  data: any,                   // b
-  children: any,               // c
-  normalizationType: any,      // d
-  alwaysNormalize: boolean
+  context: Component,          // 执行上下文，vm 实例
+  tag: any,                    // a 标签名
+  data: any,                   // b data 键值对
+  children: any,               // c 子元素
+  normalizationType: any,      // d normalizationType 通常不传
+  alwaysNormalize: boolean     // 编译生成的render涵数为 false; 手写的render涵数为 true.
 ): VNode | Array<VNode> {
   // isPrimitive方法会判断data是否为 string||number||symbol||boolean
   // 这里 data 只能为 object , 若不是，则表示 data 未传，做参数重载
@@ -46,6 +46,7 @@ export function createElement (
   if (isTrue(alwaysNormalize)) {
     normalizationType = ALWAYS_NORMALIZE
   }
+  // 这里手写 render 时，normalizationType 为 2
   // 最终内部调用 _createElement 创建 vnode
   return _createElement(context, tag, data, children, normalizationType)
 }

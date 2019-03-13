@@ -29,8 +29,8 @@ import {
 } from '../util/index'
 
 const sharedPropertyDefinition = {
-  enumerable: true,
-  configurable: true,
+  enumerable: true,                   // 可枚举
+  configurable: true,                 // 可配置
   get: noop,
   set: noop
 }

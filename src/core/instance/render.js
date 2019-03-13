@@ -80,6 +80,7 @@ export function renderMixin (Vue: Class<Component>) {
   Vue.prototype._render = function (): VNode {
     const vm: Component = this
     // 从vm.$options拿到render函数，这里render可以是用户自己写，也可以通过编译生成
+    // _parentVnode 父级 Vnode, 即组件占位 vnode
     const { render, _parentVnode } = vm.$options
 
     // reset _rendered flag on slots for duplicate slot check
