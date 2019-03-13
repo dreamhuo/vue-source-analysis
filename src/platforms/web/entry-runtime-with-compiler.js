@@ -11,6 +11,8 @@ import { shouldDecodeNewlines, shouldDecodeNewlinesForHref } from './util/compat
 
 // 这里是把innerHTML做了缓存到 query(id) 上
 // cached 是一个闭包函数，定义了一个 cache = Object.create(null) 对象用于缓存获取到的 innerHTML
+// cached 接收一个箭头函数，箭头函数的参数为 id, 同时 cached 返回一个函数给 idToTemplate
+// idToTemplate 也是一个函数，调用 idToTemplate 传入的值，就是 cached 返回的函数  cachedFn (str）的 str参数
 const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
