@@ -127,8 +127,9 @@ export default class Watcher {
       if (this.deep) {
         traverse(value)
       }
-      // ** 将 Dep.target 恢复到上一个值，并且将当前 Watcher 从 Dep 的 subs 中去除
+      // ** 将 Dep.target 恢复到上一个值
       popTarget()
+      // 将当前 Watcher 从 Dep 的 subs 中去除
       this.cleanupDeps()
     }
     return value
