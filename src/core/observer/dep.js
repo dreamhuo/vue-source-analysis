@@ -55,13 +55,15 @@ export default class Dep {
 // this is globally unique because there could be only one
 // watcher being evaluated at any time.
 Dep.target = null
-const targetStack = []
+const targetStack = []      // targetStack 数组用于缓存 Watch 队列
 
+// pushTarget 函数,将当前 Watch 缓存到 targetStack; 将即将要执行的 watch 附值到 Dep.target 上
 export function pushTarget (_target: ?Watcher) {
   if (Dep.target) targetStack.push(Dep.target)
   Dep.target = _target
 }
 
+// 将 上一个执行的 watch 从 targetStack 数组中拿出，置到 Dep.target 上
 export function popTarget () {
   Dep.target = targetStack.pop()
 }

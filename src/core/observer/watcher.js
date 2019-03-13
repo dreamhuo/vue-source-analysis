@@ -149,7 +149,7 @@ export default class Watcher {
   }
 
   /**
-   * Clean up for dependency collection.
+   * 清理依赖项集合
    */
   cleanupDeps () {
     let i = this.deps.length
