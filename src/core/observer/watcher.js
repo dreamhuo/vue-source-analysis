@@ -60,26 +60,32 @@ export default class Watcher {
       this.user = !!options.user
       this.computed = !!options.computed
       this.sync = !!options.sync
-      this.before = options.before
+      this.before = options.before                        // 这里是 before 函数，里面执行了 callHook(vm, 'beforeUpdate') 钩子
     } else {
       this.deep = this.user = this.computed = this.sync = false
     }
     this.cb = cb
-    this.id = ++uid // uid for batching
+    this.id = ++uid                                        // 这很重要，自增的，用于标识这个 watcher
     this.active = true
-    this.dirty = this.computed // for computed watchers
-    this.deps = []
-    this.newDeps = []
+    this.dirty = this.computed                             // 为 computed watchers 特有属性
+
     this.depIds = new Set()
+    this.deps = []
+
     this.newDepIds = new Set()
+    this.newDeps = []
+
     this.expression = process.env.NODE_ENV !== 'production'
       ? expOrFn.toString()
       : ''
     // parse expression for getter
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
+      // 当是在render Watchers 时为     updateComponent = () => {
+      //                                   vm._update(vm._render(), hydrating)
+      //                               }
     } else {
-      this.getter = parsePath(expOrFn)
+      this.getter = parsePath(expOrFn)         // 当为 computed watchers 时，他通过 parsePath 转换为函数。传入字符串，通过parsePath获取data上的值
       if (!this.getter) {
         this.getter = function () {}
         process.env.NODE_ENV !== 'production' && warn(

@@ -204,6 +204,8 @@ export function mountComponent (
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
   // 实例化一个渲染Watcher
+  // 这里把 updateComponent 作为 Watcher 的 getter; callBack 为 noop; options 里只定义了 一个 before 函数
+  // before 函数里定义了 beforeUpdate 生命周期钩子
   new Watcher(vm, updateComponent, noop, {
     before () {
       // 如果是已经挂载的，就触发beforeUpdate方法。
