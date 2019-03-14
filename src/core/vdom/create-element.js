@@ -102,13 +102,17 @@ export function _createElement (
   }
   // SIMPLE_NORMALIZE 1
   // ALWAYS_NORMALIZE 2
+  // 根据render函数是编译生成还是用户手写，分别调用了simpleNormalizeChildren和normalizeChildren
   if (normalizationType === ALWAYS_NORMALIZE) {
+    // 手写走这里，会根据 render 函数，创建 vnodeText 节点
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
+    // 编译走这里,这里只会把 children 拍平
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
   // 对 tag 进行判断，这里 tag 可以是一个字符串，也可以是一个组件
+  // 字符串情况，div、span、组件tag；
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)

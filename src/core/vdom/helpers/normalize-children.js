@@ -3,21 +3,10 @@
 import VNode, { createTextVNode } from 'core/vdom/vnode'
 import { isFalse, isTrue, isDef, isUndef, isPrimitive } from 'shared/util'
 
-// The template compiler attempts to minimize the need for normalization by
-// statically analyzing the template at compile time.
-//
-// For plain HTML markup, normalization can be completely skipped because the
-// generated render function is guaranteed to return Array<VNode>. There are
-// two cases where extra normalization is needed:
-
-// 1. When the children contains components - because a functional component
-// may return an Array instead of a single root. In this case, just a simple
-// normalization is needed - if any child is an Array, we flatten the whole
-// thing with Array.prototype.concat. It is guaranteed to be only 1-level deep
-// because functional components already normalize their own children.
 // simpleNormalizeChildren 方法调用了场景是 render 函数当函数是编译生成的。
 // 理论上编译生成的 children 都已经是 VNode 类型的，但是这里会有一些例外的情况，
 // 就是 functional component 函数式组件返回的是一个数组而不是一个根节点，
+// v-for 返回的也是一个数组，需要把它拍平
 // 所有会通过 Array.prototype.concat 方法把整个 children 数组打平，让它的深度只有一层。
 export function simpleNormalizeChildren (children: any) {
   for (let i = 0; i < children.length; i++) {
