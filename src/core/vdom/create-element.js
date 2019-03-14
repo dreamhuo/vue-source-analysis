@@ -116,8 +116,9 @@ export function _createElement (
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    // config.isReservedTag(tag) 会通过 isHTMLTag(tag) || isSVG(tag) 判断是不是 html 标签
     if (config.isReservedTag(tag)) {
-      // platform built-in elements
+      // config.parsePlatformTagName(tag) 在浏览器端，直接就调用 identity 函数，直接返回传入的值
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
