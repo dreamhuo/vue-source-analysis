@@ -53,7 +53,9 @@ export function lifecycleMixin (Vue: Class<Component>) {
     const vm: Component = this
     // 定义变量为数据改变时调用，首次挂载时为空。
     const prevEl = vm.$el
+    // 前一个 vnode
     const prevVnode = vm._vnode
+    // 前一个 vm 实例
     const prevActiveInstance = activeInstance
     // 当前激活实例为当前 vm
     activeInstance = vm
