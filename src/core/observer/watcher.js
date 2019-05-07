@@ -112,7 +112,7 @@ export default class Watcher {
       this.value = undefined
       this.dep = new Dep()
     } else {
-      this.value = this.get()
+      this.value = this.get()                    // 若是 渲染 watch 直接调用 watch 上的 get() 方法求值
     }
   }
 
@@ -120,12 +120,12 @@ export default class Watcher {
    * Watcher的构造函数最终调用了 get 方法
    */
   get () {
-    // 将当前 Watcher 实例传递给 Dep 的 Dep.target。
+    // 将当前 Watcher 实例传递给 Dep 的 Dep.target, 渲染下一个 watch 时，会把 上一个 watch push 进 targetStack 数组
     pushTarget(this)
     let value
     const vm = this.vm
     try {
-      // 执行 Watcher 所监测的数据的 getter 方法。 也就是执行 updateComponent
+      // 执行 Watcher 所监测的数据的 getter 方法。 渲染 watch 时也就是执行 updateComponent
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -139,7 +139,7 @@ export default class Watcher {
       if (this.deep) {
         traverse(value)
       }
-      // ** 将 Dep.target 恢复到上一个值
+      // ** 渲染完当前 watch时，将， 将 Dep.target 恢复到上一个值
       popTarget()
       // 将当前 Watcher 从 Dep 的 subs 中去除
       this.cleanupDeps()
