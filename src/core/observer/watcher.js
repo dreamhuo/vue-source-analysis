@@ -43,33 +43,45 @@ export default class Watcher {
   value: any;
 
   constructor (
-    vm: Component,
-    expOrFn: string | Function,
-    cb: Function,
-    options?: ?Object,
-    isRenderWatcher?: boolean
+    vm: Component,                                     // vm实例
+    expOrFn: string | Function,                        // 最终做为 watcher 的 getter    updateComponent
+    cb: Function,                                      // 回调函数
+    options?: ?Object,                                 // 配置对象 渲染函数时 有 before 函数
+    isRenderWatcher?: boolean                          // 是否是渲染 watch
   ) {
     this.vm = vm
+    // 若是 渲染 watcher 把 this 缓存在 vm._watcher 上
     if (isRenderWatcher) {
       vm._watcher = this
     }
+    // push 进 _watchers 数组
     vm._watchers.push(this)
     // options
     if (options) {
-      this.deep = !!options.deep
-      this.user = !!options.user
-      this.computed = !!options.computed
-      this.sync = !!options.sync
+      this.deep = !!options.deep                         // 用户定义 watch 深层遍历监听数据变化
+      this.user = !!options.user                         // 是否是 user watch
+      this.computed = !!options.computed                 // 是否是 computed watch
+      this.sync = !!options.sync                         // 同步
       this.before = options.before                        // 这里是 before 函数，里面执行了 callHook(vm, 'beforeUpdate') 钩子
     } else {
-      this.deep = this.user = this.computed = this.sync = false
+      this.deep = this.user = this.computed = this.sync = false       // 如果没有转入，统一置为 false
     }
     this.cb = cb
-    this.id = ++uid                                        // 这很重要，自增的，用于标识这个 watcher
-    this.active = true
+    this.id = ++uid                                        // 这很重要，自增的，用于标识这个 watcher, 默认为 0，++在前面，第一个为1
+    this.active = true                                     // 标识当前为 活动watch
     this.dirty = this.computed                             // 为 computed watchers 特有属性
 
-    this.depIds = new Set()
+    // Set对象是值的集合，你可以按照插入的顺序迭代它的元素, Set 中的元素是唯一的
+    // Set.prototype.size         返回Set对象的值的个数
+    // Set.prototype.add(value)   在Set对象尾部添加一个元素。返回该Set对象
+    // Set.prototype.clear()      移除Set对象内的所有元素。
+    // Set.prototype.has(value)   返回一个布尔值，表示该值在Set中存在与否
+    // Set.prototype.delete(value) 移除Set的中与这个值相等的元素
+    // 用forEach迭代
+    // mySet.forEach(function(value) {
+    //   console.log(value);
+    // });
+    this.depIds = new Set()              // 用于在更新时，缓存依赖ID
     this.deps = []
 
     this.newDepIds = new Set()
