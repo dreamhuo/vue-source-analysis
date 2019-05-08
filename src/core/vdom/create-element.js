@@ -74,7 +74,7 @@ export function _createElement (
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
   }
-  // data.is 若不是真值时，返回空的 VNode
+  // tag 若不存在时，返回空的 VNode
   if (!tag) {
     // in case of component :is set to falsy value
     return createEmptyVNode()
@@ -93,9 +93,11 @@ export function _createElement (
     }
   }
   // support single function children as default scoped slot
-  if (Array.isArray(children) &&
-    typeof children[0] === 'function'
-  ) {
+  // 作用域插槽
+  // Vue 推荐在绝大多数情况下使用 template 来创建你的 HTML。
+  // 然而在一些场景中，你真的需要 JavaScript 的完全编程的能力，这就是 render 函数，它比 template 更接近编译器
+  // 开发组件共用时会用到
+  if (Array.isArray(children) && typeof children[0] === 'function') {
     data = data || {}
     data.scopedSlots = { default: children[0] }
     children.length = 0

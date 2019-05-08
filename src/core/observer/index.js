@@ -106,10 +106,12 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  *重点在 observe 方法
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 如果是 对象 或是一个 VNode 直接返回
   if (!isObject(value) || value instanceof VNode) {
     return
   }
   let ob: Observer | void
+  // 若对象上存在 __ob__ 并且 是 Observer 对象实例
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (

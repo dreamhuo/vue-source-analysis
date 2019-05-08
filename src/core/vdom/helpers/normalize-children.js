@@ -7,10 +7,10 @@ import { isFalse, isTrue, isDef, isUndef, isPrimitive } from 'shared/util'
 // 理论上编译生成的 children 都已经是 VNode 类型的，但是这里会有一些例外的情况，
 // 就是 functional component 函数式组件返回的是一个数组而不是一个根节点，
 // v-for 返回的也是一个数组，需要把它拍平
-// 所有会通过 Array.prototype.concat 方法把整个 children 数组打平，让它的深度只有一层。
 export function simpleNormalizeChildren (children: any) {
   for (let i = 0; i < children.length; i++) {
     if (Array.isArray(children[i])) {
+      // 所有会通过 Array.prototype.concat 方法把整个 children 数组打平，让它的深度只有一层。
       return Array.prototype.concat.apply([], children)
     }
   }
@@ -33,6 +33,9 @@ function isTextNode (node): boolean {
   return isDef(node) && isDef(node.text) && isFalse(node.isComment)
 }
 
+// render函数最终调用 normalizeArrayChildren 对 Children 进行深度遍历
+// 直到 children 为基础类型时，创建 textNode
+// 中间做了一些，相邻节点都为文本节点，则合并为一个 vnode
 function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNode> {
   // 定义 res 数组，最终返回 res 数组
   const res = []
@@ -41,6 +44,7 @@ function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNo
   // 遍历 children 数组
   for (i = 0; i < children.length; i++) {
     c = children[i]
+    // 异常处理防止 data未定义此值或其他异常，元素为 null或为 undefind 或者是一个布尔值，则 continue 跳出当前循环
     if (isUndef(c) || typeof c === 'boolean') continue
     lastIndex = res.length - 1
     last = res[lastIndex]
