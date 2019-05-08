@@ -25,6 +25,7 @@ export default class Dep {
   }
 
   removeSub (sub: Watcher) {
+    // remove 方法删除数组 this.subs 中 sub 元素
     remove(this.subs, sub)
   }
   // **在 depend 方法中，Dep.target 就是一个 Watcher 实例，
