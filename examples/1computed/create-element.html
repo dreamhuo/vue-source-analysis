@@ -16,16 +16,80 @@
     el: '#app',
     render(h) {
       return h('div', {
-        atts: {
-          id: '#app1'
-        }
+          // 正常的 HTML 特性
+          attrs:{
+            id: 'fdsfa',
+            value2: '3333333'
+          },
+          // 组件 props
+          props: {
+              value1:'11111111'
+          },
+          // 和`v-bind:style`一样的 API
+          style:{
+            width:'300px'
+          },　
+          // 和`v-bind:class`一样的 API
+          class: {
+            foo: true,
+            bar: false
+          },
+          // 自定义指令。注意，你无法对 `binding` 中的 `oldValue`
+          // 赋值，因为 Vue 已经自动为你进行了同步。
+          directives: [
+            {
+              name: 'my-custom-directive',
+              value: '2',
+              expression: '1 + 1',
+              arg: 'foo',
+              modifiers: {
+                bar: true
+              }
+            }
+          ],
+          // Scoped slots in the form of
+          // { name: props => VNode | Array<VNode> }
+          scopedSlots: {
+            default: props => createElement('span', props.text)
+          },
+          // 如果组件是其他组件的子组件，需为插槽指定名称
+          slot: 'name-of-slot',
+          // 其他特殊顶层属性
+          key: 'myKey',
+          ref: 'myRef'
+          // DOM 属性, 直接会执行 innerHTML 方法
+          // domProps: {
+          //   innerHTML: 'baz'
+          // },
+          // 仅对于组件，用于监听原生事件，而不是组件内部使用
+          // `vm.$emit` 触发的事件。
+          // nativeOn: {
+          //   click: this.nativeClickHandler
+          // },
+          //给div绑定点击事件　　
+          on: {
+            click: () => {
+                console.log('点击事件')
+            }
+          }
       }, [
         this.message,
-        1111,
+        '测试一下看看',
         333333,
+        h('input',{
+            attrs: {
+              type: 'text',
+              value:'这是'
+            },
+            // 组件 props
+            props: {
+                value:'11111111'
+            }
+          }
+        ),
         h('div', {
-            atts: {
-              id: '#app1_sub'
+            attrs: {
+              id: 'app1_sub11'
             }
           },
           [

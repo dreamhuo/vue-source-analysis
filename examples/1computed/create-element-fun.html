@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>createElement example</title>
+    <!-- Delete ".min" for console warnings in development -->
+    <script src="../../dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
+<script type="text/javascript">
+
+  var app = new Vue({
+    el: '#app',
+    render(h) {
+      render '<div id="render_wrap">这是一个render</div>'
+    },
+    data() {
+      return {
+        message: 'Hello Vue!'
+      }
+    }
+  })
+</script>
