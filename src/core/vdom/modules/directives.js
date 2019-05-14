@@ -19,7 +19,9 @@ function updateDirectives (oldVnode: VNodeWithData, vnode: VNodeWithData) {
 }
 
 function _update (oldVnode, vnode) {
+  // 老 vnode 为 emptyNode，则 isCreate 为 true 标识当前为创建节点
   const isCreate = oldVnode === emptyNode
+  // 新 vnode 为 emptyNode, 则 isDestroy 为 true 标识当前销毁节点
   const isDestroy = vnode === emptyNode
   const oldDirs = normalizeDirectives(oldVnode.data.directives, oldVnode.context)
   const newDirs = normalizeDirectives(vnode.data.directives, vnode.context)

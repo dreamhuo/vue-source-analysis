@@ -22,6 +22,9 @@ export function createElement (tagName: string, vnode: VNode): Element {
 }
 
 // createElementNS() 方法可创建带有指定命名空间的元素节点。
+// createElementNS() 方法与 createElement() 方法相似，
+// 只是它创建的 Element 节点除了具有指定的名称外，还具有指定的命名空间。
+// 只有使用命名空间的 XML 文档才会使用该方法。
 export function createElementNS (namespace: string, tagName: string): Element {
   return document.createElementNS(namespaceMap[namespace], tagName)
 }
@@ -86,6 +89,7 @@ export function setTextContent (node: Node, text: string) {
 }
 
 // setAttribute() 方法创建或改变某个新属性
+// 这里只创建一个占位属性，相当于一个命名空间
 export function setStyleScope (node: Element, scopeId: string) {
   node.setAttribute(scopeId, '')
 }
