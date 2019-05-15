@@ -31,6 +31,8 @@ function _update (oldVnode, vnode) {
   const isCreate = oldVnode === emptyNode
   // 新 vnode 为 emptyNode, 则 isDestroy 为 true 标识当前销毁节点
   const isDestroy = vnode === emptyNode
+  // normalizeDirectives 标准化指令，
+// 主要把每个指令 name 初始化成 实际用的指令，并把修饰符加到 name 后面
   const oldDirs = normalizeDirectives(oldVnode.data.directives, oldVnode.context)
   const newDirs = normalizeDirectives(vnode.data.directives, vnode.context)
 
@@ -38,16 +40,21 @@ function _update (oldVnode, vnode) {
   const dirsWithPostpatch = []
 
   let key, oldDir, dir
+  // 徇环新的 指令集，
   for (key in newDirs) {
     oldDir = oldDirs[key]
     dir = newDirs[key]
+    // 是否有老的指令集，没有则是新增，有则是更新
     if (!oldDir) {
+      // 如果老的指令没有，则调用 bind 钩子
       // new directive, bind
       callHook(dir, 'bind', vnode, oldVnode)
+      // 在 指令上有 inserted 方法，push进 dirsWithInsert
       if (dir.def && dir.def.inserted) {
         dirsWithInsert.push(dir)
       }
     } else {
+      // 调用 update 方法
       // existing directive, update
       dir.oldValue = oldDir.value
       callHook(dir, 'update', vnode, oldVnode)
@@ -57,7 +64,9 @@ function _update (oldVnode, vnode) {
     }
   }
 
+  // 插入事件方法在这里执行
   if (dirsWithInsert.length) {
+    // 把所有的指令集的 inserted 钩子函数放到一个数组里
     const callInsert = () => {
       for (let i = 0; i < dirsWithInsert.length; i++) {
         callHook(dirsWithInsert[i], 'inserted', vnode, oldVnode)
