@@ -136,6 +136,7 @@ export function remove (arr: Array<any>, item: any): Array<any> | void {
 
 /**
  * Check whether the object has the property.
+ * 检查对象自身属性中是否具有指定的属性
  */
 const hasOwnProperty = Object.prototype.hasOwnProperty
 export function hasOwn (obj: Object | Array<*>, key: string): boolean {
@@ -160,7 +161,15 @@ export function cached<F: Function> (fn: F): F {
  * 羊肉串 改为陀峰
  */
 const camelizeRE = /-(\w)/g
+// \w 匹配字母或数字或下划线或汉字 等价于 '[^A-Za-z0-9_]'
+// ()：匹配小括号内的字符串，可以是一个，也可以是多个，常跟“|”（或）符号搭配使用，是多选结构的
+// regex：(way|zgw)  result：结果是可以匹配出way的，因为是多选结构，小括号是匹配字符串的
+// 这里 cached 做了一层缓存闭包
 export const camelize = cached((str: string): string => {
+  // replace 方法可接收两个参数
+  // 第一个参数接收一个正则表达式
+  // 第二个参数接收一个函数  会对每个匹配到的字符串'rs'做一次处理
+  console.log('camelize:::' + str)
   return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
 })
 

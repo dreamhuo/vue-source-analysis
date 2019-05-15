@@ -1,9 +1,14 @@
 /* @flow */
-
+// emptyNode创建一个空的 vnode
+// export const emptyNode = new VNode('', {}, [])
 import { emptyNode } from 'core/vdom/patch'
 import { resolveAsset, handleError } from 'core/util/index'
 import { mergeVNodeHook } from 'core/vdom/helpers/index'
 
+// 这里 抛出指令 create、 update、 destroy方法
+// 都统一调用 updateDirectives 方法
+// 这里 destroy方法，通过 unbindDirectives 方法对 updateDirectives 方法又包了一层
+// 这样让 destroy 只接一个参数
 export default {
   create: updateDirectives,
   update: updateDirectives,
@@ -12,7 +17,9 @@ export default {
   }
 }
 
+// updateDirectives方法封装了 _update 方法
 function updateDirectives (oldVnode: VNodeWithData, vnode: VNodeWithData) {
+  // 这里有 directives 属性，调用 _update(oldVnode, vnode) 方法
   if (oldVnode.data.directives || vnode.data.directives) {
     _update(oldVnode, vnode)
   }
@@ -82,16 +89,22 @@ function _update (oldVnode, vnode) {
 
 const emptyModifiers = Object.create(null)
 
+// normalizeDirectives 标准化指令
+// 第一个参数：指令数组
+// 第二个参数：vm 实例
 function normalizeDirectives (
   dirs: ?Array<VNodeDirective>,
   vm: Component
 ): { [key: string]: VNodeDirective } {
+  // 创建一个空对象
   const res = Object.create(null)
+  // 如果指令数组为空则直接返回空数组
   if (!dirs) {
     // $flow-disable-line
     return res
   }
   let i, dir
+  // 循环指令数组
   for (i = 0; i < dirs.length; i++) {
     dir = dirs[i]
     if (!dir.modifiers) {

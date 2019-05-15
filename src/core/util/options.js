@@ -412,18 +412,20 @@ export function mergeOptions (
  * This function is used because child instances need access
  * to assets defined in its ancestor chain.
  */
+ // 子实例需要访问在其祖先链中定义的资产
 export function resolveAsset (
   options: Object,
   type: string,
   id: string,
   warnMissing?: boolean
 ): any {
-  /* istanbul ignore if */
+   // 如果 id 不为字符串，则直接跳过
   if (typeof id !== 'string') {
     return
   }
+  // 获取 options[type] 对象
   const assets = options[type]
-  // check local registration variations first
+  // 检查 assets 对象自身属性中是否具有指定 id 属性，有则直接返回
   if (hasOwn(assets, id)) return assets[id]
   const camelizedId = camelize(id)
   if (hasOwn(assets, camelizedId)) return assets[camelizedId]
