@@ -414,10 +414,10 @@ export function mergeOptions (
  */
  // 子实例需要访问在其祖先链中定义的资产
 export function resolveAsset (
-  options: Object,
-  type: string,
-  id: string,
-  warnMissing?: boolean
+  options: Object,                    // vm.$options
+  type: string,                       // driectives 或者其他
+  id: string,                         // 指令 name 或其他
+  warnMissing?: boolean               // 是否显示警告信息
 ): any {
    // 如果 id 不为字符串，则直接跳过
   if (typeof id !== 'string') {

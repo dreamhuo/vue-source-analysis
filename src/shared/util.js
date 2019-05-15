@@ -168,8 +168,7 @@ const camelizeRE = /-(\w)/g
 export const camelize = cached((str: string): string => {
   // replace 方法可接收两个参数
   // 第一个参数接收一个正则表达式
-  // 第二个参数接收一个函数  会对每个匹配到的字符串'rs'做一次处理
-  console.log('camelize:::' + str)
+  // 第二个参数接收一个函数  会对每个匹配到的字符串做一次处理
   return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
 })
 

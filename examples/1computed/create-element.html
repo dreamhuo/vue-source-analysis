@@ -37,11 +37,15 @@
           // 自定义指令。注意，你无法对 `binding` 中的 `oldValue`
           // 赋值，因为 Vue 已经自动为你进行了同步。
           directives: [
+            //自定义指令 binding 对象，包含以下属性
             {
-              name: 'my-custom-directive',
-              value: '2',
-              expression: '1 + 1',
-              arg: 'foo',
+              name: 'my-custom-directive', // name：指令名，不包含v-的前缀
+              value: '2', // 指令的绑定值 例如：v-my-custom-directive="1+1"，value的值是2
+              // oldValue：指令绑定的前一个值，仅在update和componentUpdated钩子函数中可用，无论值是否改变都可用；
+              expression: '1 + 1', // 绑定值的字符串形式；例如：v-my-custom-directive="1+1"，expression的值是'1+1'；
+              arg: 'foo', // arg：传给指令的参数；例如：v-my-custom-directive:foo，arg的值为 'foo'
+              // 一个包含修饰符的对象；
+              // 例如：v-my-custom-directive.a.b，modifiers的值为{'a':true,'b':true}
               modifiers: {
                 bar: true
               }

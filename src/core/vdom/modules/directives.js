@@ -18,6 +18,7 @@ export default {
 }
 
 // updateDirectives方法封装了 _update 方法
+// 使用Vue.directive(id,definition)注册全局自定义指令
 function updateDirectives (oldVnode: VNodeWithData, vnode: VNodeWithData) {
   // 这里有 directives 属性，调用 _update(oldVnode, vnode) 方法
   if (oldVnode.data.directives || vnode.data.directives) {
@@ -89,7 +90,8 @@ function _update (oldVnode, vnode) {
 
 const emptyModifiers = Object.create(null)
 
-// normalizeDirectives 标准化指令
+// normalizeDirectives 标准化指令，
+// 主要把每个指令 name 初始化成 实际用的指令，并把修饰符加到 name 后面
 // 第一个参数：指令数组
 // 第二个参数：vm 实例
 function normalizeDirectives (
@@ -107,6 +109,7 @@ function normalizeDirectives (
   // 循环指令数组
   for (i = 0; i < dirs.length; i++) {
     dir = dirs[i]
+    // 判断是否有修饰符，没有则符一个空对象到修饰符上
     if (!dir.modifiers) {
       // $flow-disable-line
       dir.modifiers = emptyModifiers
@@ -114,11 +117,13 @@ function normalizeDirectives (
     res[getRawDirName(dir)] = dir
     dir.def = resolveAsset(vm.$options, 'directives', dir.name, true)
   }
-  // $flow-disable-line
+  // 返回处理好的指令
   return res
 }
 
+// 获取新处理的指令名
 function getRawDirName (dir: VNodeDirective): string {
+  // 有 rawName 就直接返回，没有则用 name + '.' + 修饰符的形式返回
   return dir.rawName || `${dir.name}.${Object.keys(dir.modifiers || {}).join('.')}`
 }
 
