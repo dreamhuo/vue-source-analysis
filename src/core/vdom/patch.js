@@ -96,20 +96,27 @@ export function createPatchFunction (backend) {
     return new VNode(nodeOps.tagName(elm).toLowerCase(), {}, [], undefined, elm)
   }
 
+  // 创建成功后回调删除节点
   function createRmCb (childElm, listeners) {
     function remove () {
+      // listeners 只有一个删除
       if (--remove.listeners === 0) {
         removeNode(childElm)
       }
     }
+    // 在 函数 remove 上挂载了一个 listeners 属性，值为传进来的
     remove.listeners = listeners
     return remove
   }
 
+  // 移除子节点
   function removeNode (el) {
+    // 获取父节点
     const parent = nodeOps.parentNode(el)
     // element may have already been removed due to v-html / v-text
+    // 元素可能已经因为v-html/v-text而被删除。
     if (isDef(parent)) {
+      // 删除子节点
       nodeOps.removeChild(parent, el)
     }
   }
