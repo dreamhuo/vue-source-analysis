@@ -91,6 +91,7 @@ export function createPatchFunction (backend) {
   }
   //处理后的 cbs 结构为 ['create' : […],   'activate' : […],   'update' : […],   'remove' : […],   'destroy' : […]]
 
+  // new 一个 vnode,只传了 tagName 和 真实DOM节点
   function emptyNodeAt (elm) {
     return new VNode(nodeOps.tagName(elm).toLowerCase(), {}, [], undefined, elm)
   }
