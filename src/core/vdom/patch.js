@@ -72,10 +72,14 @@ export function createPatchFunction (backend) {
   const cbs = {}
 
   // 获取后端方法 nodeOps node节点操作方法集合
-  // modules定义了 attrs, klass, events, domProps, style, transition 的更新操作工具方法
   // modules、nodeOps都返回数组
+  // modules定义了  ref, directives, attrs, klass, events, domProps, style, transition 的更新操作工具方法
+  // modules 结构为 [{create, update}, {create, update}, {create, update}, ……, {create, destroy, update}]
+  // 把所有节点操作 都放在了数组里，对应 create 方法、 update 方法
+  // nodeOps 结构为 {appendChild, createComment, createElement, createElementNS,
+    // createTextNode, insertBefore, nextSibling, parentNode, removeChild, setStyleScope, setTextContent, tagName}
   const { modules, nodeOps } = backend
-
+  // 循环 hooks ['create', 'activate', 'update', 'remove', 'destroy']
   for (i = 0; i < hooks.length; ++i) {
     cbs[hooks[i]] = []
     for (j = 0; j < modules.length; ++j) {

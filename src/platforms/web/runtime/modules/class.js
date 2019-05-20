@@ -1,5 +1,6 @@
 /* @flow */
-
+  // create: updateClass   创建 class
+  // update: updateClass   更新 class
 import {
   isDef,
   isUndef

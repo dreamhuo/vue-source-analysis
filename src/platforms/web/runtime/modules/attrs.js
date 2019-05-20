@@ -1,5 +1,6 @@
 /* @flow */
-
+  // create: updateAttrs, 创建一个 attrs
+  // update: updateAttrs  更新一个 attrs
 import { isIE, isIE9, isEdge } from 'core/util/env'
 
 import {

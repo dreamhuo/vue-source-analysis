@@ -1,5 +1,9 @@
 /* @flow */
 
+  // create: _enter,            // 创建过渡
+  // activate: _enter,          // 触发过渡
+  // remove                     // 移除过渡
+
 import { inBrowser, isIE9, warn } from 'core/util/index'
 import { mergeVNodeHook } from 'core/vdom/helpers/index'
 import { activeInstance } from 'core/instance/lifecycle'

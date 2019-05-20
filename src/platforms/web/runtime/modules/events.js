@@ -1,5 +1,6 @@
 /* @flow */
-
+  // create: updateDOMListeners 创建 events
+  // update: updateDOMListeners 更新 events
 import { isDef, isUndef } from 'shared/util'
 import { updateListeners } from 'core/vdom/helpers/index'
 import { withMacroTask, isIE, supportsPassive } from 'core/util/index'

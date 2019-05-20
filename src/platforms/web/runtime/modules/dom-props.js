@@ -1,5 +1,6 @@
 /* @flow */
-
+  // create: updateDOMProps 创建 props
+  // update: updateDOMProps 更新 props
 import { isDef, isUndef, extend, toNumber } from 'shared/util'
 
 function updateDOMProps (oldVnode: VNodeWithData, vnode: VNodeWithData) {

@@ -73,12 +73,15 @@ function _update (oldVnode, vnode) {
       }
     }
     if (isCreate) {
+      // 未创建过的，先调用 insert 方法，再调用 inserted 方法
       mergeVNodeHook(vnode, 'insert', callInsert)
     } else {
+      // 如果己经创建后，直接调用 inserted 方法
       callInsert()
     }
   }
 
+  // 调用 componentUpdated 钩子函数
   if (dirsWithPostpatch.length) {
     mergeVNodeHook(vnode, 'postpatch', () => {
       for (let i = 0; i < dirsWithPostpatch.length; i++) {
@@ -87,6 +90,7 @@ function _update (oldVnode, vnode) {
     })
   }
 
+  // 如果销毁，调用 unbind 钩子
   if (!isCreate) {
     for (key in oldDirs) {
       if (!newDirs[key]) {

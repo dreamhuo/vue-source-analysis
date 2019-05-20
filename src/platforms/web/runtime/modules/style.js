@@ -1,5 +1,6 @@
 /* @flow */
-
+  // create: updateStyle 创建 style
+  // update: updateStyle 更新 style
 import { getStyle, normalizeStyleBinding } from 'web/util/style'
 import { cached, camelize, extend, isDef, isUndef } from 'shared/util'
 
