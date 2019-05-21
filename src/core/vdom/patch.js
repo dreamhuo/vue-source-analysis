@@ -92,6 +92,7 @@ export function createPatchFunction (backend) {
   //处理后的 cbs 结构为 ['create' : […],   'activate' : […],   'update' : […],   'remove' : […],   'destroy' : […]]
 
   // new 一个 vnode,只传了 tagName 和 真实DOM节点
+  // emptyNodeAt 方法就是把真实 dom 转换为 vnode
   function emptyNodeAt (elm) {
     return new VNode(nodeOps.tagName(elm).toLowerCase(), {}, [], undefined, elm)
   }
@@ -101,6 +102,7 @@ export function createPatchFunction (backend) {
     function remove () {
       // listeners 只有一个删除
       if (--remove.listeners === 0) {
+        // 移除这个子节点
         removeNode(childElm)
       }
     }
@@ -121,6 +123,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 未识别的 element 对象
   function isUnknownElement (vnode, inVPre) {
     return (
       !inVPre &&
@@ -380,14 +383,19 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 销毁节点钩子
   function invokeDestroyHook (vnode) {
     let i, j
     const data = vnode.data
     if (isDef(data)) {
+      // data.hook.destroy 存在，则调用下 data上销毁钩子
       if (isDef(i = data.hook) && isDef(i = i.destroy)) i(vnode)
+      // 徇环把所有 destroy 钩子调用一遍
       for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode)
     }
+    // vnode 如果存在 children
     if (isDef(i = vnode.children)) {
+      // 徇环 children 节点，递归调用 invokeDestroyHook 函数销毁节点
       for (j = 0; j < vnode.children.length; ++j) {
         invokeDestroyHook(vnode.children[j])
       }
