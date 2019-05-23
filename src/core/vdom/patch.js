@@ -144,8 +144,8 @@ export function createPatchFunction (backend) {
 
   // ***先看 createElm 方法，这个方法创建了真实 DOM 元素。
   function createElm (
-    vnode,
-    insertedVnodeQueue,
+    vnode,                            // 需要创建真实 dom 的 vnode
+    insertedVnodeQueue,               // insert 勾子用的东西
     parentElm,
     refElm,
     nested,
@@ -158,10 +158,13 @@ export function createPatchFunction (backend) {
       // potential patch errors down the road when it's used as an insertion
       // reference node. Instead, we clone the node on-demand before creating
       // associated DOM element for it.
+      // 此vode用于以前的呈现！现在它被用作一个新的节点，覆盖它的ELM将导致潜在的补丁错误，
+      // 当它被用作插入引用节点时。相反，在为节点创建相关DOM元素之前，我们先按需克隆节点。
       // cloneVNode 用于克隆当前 vnode 对象。
       vnode = ownerArray[index] = cloneVNode(vnode)
     }
 
+    // 首次创建是一个 root 节点插入
     vnode.isRootInsert = !nested // for transition enter check
     // 创建组件
     // createComponent 用于创建组件，在调用了组件初始化钩子之后，初始化组件，并且重新激活组件。在重新激活组件中使用 insert 方法操作 DOM
