@@ -104,7 +104,7 @@ export default class VNode {
     this.context = context                          // 当前节点上下文   所有对象的 context 选项都指向了 Vue 实例
     this.fnContext = undefined                      // 函数化组件上下文
     this.fnOptions = undefined                      // 函数化组件配置项
-    this.fnScopeId = undefined                      // 函数化组件ScopeId
+    this.fnScopeId = undefined                      // 函数化组件ScopeId // 方法作用域id
     this.key = data && data.key                     // 子节点key属性
     this.componentOptions = componentOptions        // 组件配置项
     this.componentInstance = undefined              // 组件实例

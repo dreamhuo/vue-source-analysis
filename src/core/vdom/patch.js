@@ -192,6 +192,8 @@ export function createPatchFunction (backend) {
       }
 
       // nodeOps.createElementNS 和 nodeOps.createElement 方法，其实是真实 DOM 的方法
+      // 看是否是 ns 节点，如果是 createElementNS 不是 createElement
+      // 创建好节点挂载到 vnode.elm 上
       vnode.elm = vnode.ns
         ? nodeOps.createElementNS(vnode.ns, tag)
         : nodeOps.createElement(tag, vnode)
@@ -359,6 +361,7 @@ export function createPatchFunction (backend) {
   // of going through the normal attribute patching process.
   function setScope (vnode) {
     let i
+    // vnode.fnScopeId 方法作用域 id
     if (isDef(i = vnode.fnScopeId)) {
       nodeOps.setStyleScope(vnode.elm, i)
     } else {
